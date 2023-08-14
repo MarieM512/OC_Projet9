@@ -5,6 +5,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class UtilsUnitTest {
 
     @Test
@@ -19,5 +23,12 @@ public class UtilsUnitTest {
         int euros = 20;
         int result = Utils.convertEuroToDollar(euros);
         assertEquals(Math.round(euros / 0.92), result);
+    }
+
+    @Test
+    public void modify_DateFormat() throws Exception {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String result = Utils.getTodayDate();
+        assertEquals(dateFormat.format(new Date()), result);
     }
 }
