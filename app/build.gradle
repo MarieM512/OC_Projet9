@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.openclassrooms.realestatemanager'
@@ -60,4 +61,8 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
     implementation 'androidx.compose.runtime:runtime-livedata:1.5.0'
+
+    // Room
+    implementation 'androidx.room:room-ktx:2.5.2'
+    kapt 'androidx.room:room-compiler:2.5.2'
 }
