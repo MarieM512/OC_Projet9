@@ -9,8 +9,13 @@ import com.openclassrooms.realestatemanager.database.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
+import com.openclassrooms.realestatemanager.database.SortType
 import com.openclassrooms.realestatemanager.database.Status
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -18,7 +23,22 @@ class PropertyViewModel(
     private val dao: PropertyDao,
 ) : ViewModel() {
 
+    private val _sortType = MutableStateFlow(SortType.ENTRY_DATE)
+    private val _properties = _sortType
+        .flatMapLatest { sortType ->
+            when(sortType) {
+                SortType.ENTRY_DATE -> dao.getPropertiesOrderedByEntryDate()
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
     private val _state = MutableStateFlow(PropertyState())
+
+    val state = combine(_state, _sortType, _properties) { state, sortType, properties ->
+    state.copy(
+        property = properties,
+        sortType = sortType
+    )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PropertyState())
 
     fun onEvent(event: PropertyEvent) {
         when (event) {
@@ -71,19 +91,24 @@ class PropertyViewModel(
                 }
                 _state.update { it.copy(
                     isAddingProperty = false,
-                    type = PropertyType.DETACHED_HOUSE,
+//                    type = PropertyType.DETACHED_HOUSE,
+                    type = "",
                     price = 0,
                     surface = 0,
                     pieceNumber = 0,
                     description = "",
-                    picture = Picture(0,0, ""),
+//                    picture = Picture(0,0, ""),
+                    picture = "",
                     address = "",
                     location = "",
-                    nearInterestPoint = emptyList(),
-                    status = Status.AVAILABLE,
+//                    nearInterestPoint = emptyList(),
+                    nearInterestPoint = "",
+//                    status = Status.AVAILABLE,
+                    status = "",
                     entryDate = "",
                     soldDate = "",
-                    agent = Agent.STEPHANE_PLAZA
+//                    agent = Agent.STEPHANE_PLAZA
+                    agent = ""
                 ) }
             }
 
@@ -189,6 +214,10 @@ class PropertyViewModel(
                         type = event.type,
                     )
                 }
+            }
+
+            is PropertyEvent.SortProperty -> {
+                _sortType.value = event.sortType
             }
 
             PropertyEvent.ShowDialog -> {
