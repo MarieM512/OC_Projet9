@@ -1,7 +1,8 @@
 package com.openclassrooms.realestatemanager;
 
 import android.content.Context;
-import android.net.wifi.WifiManager;
+import android.net.ConnectivityManager;
+import android.os.Build;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,16 @@ public class Utils {
      * @return
      */
     public static int convertDollarToEuro(int dollars){
-        return (int) Math.round(dollars * 0.812);
+        return (int) Math.round(dollars * 0.92);
+    }
+
+    /**
+     * Conversion Euros to Dollars
+     * @param euros
+     * @return
+     */
+    public static int convertEuroToDollar(int euros) {
+        return (int) Math.round(euros / 0.92);
     }
 
     /**
@@ -29,7 +39,7 @@ public class Utils {
      * @return
      */
     public static String getTodayDate(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(new Date());
     }
 
@@ -40,7 +50,10 @@ public class Utils {
      * @return
      */
     public static Boolean isInternetAvailable(Context context){
-        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        return wifi.isWifiEnabled();
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return connectivityManager.getActiveNetwork() != null && connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork()) != null;
+        }
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }
