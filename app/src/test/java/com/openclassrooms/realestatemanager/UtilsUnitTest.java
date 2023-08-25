@@ -14,14 +14,14 @@ public class UtilsUnitTest {
     public void convert_dollarToEuro() throws Exception {
         int dollars = 20;
         int result = Utils.convertDollarToEuro(dollars);
-        assertEquals(Math.round(dollars * 0.92), result);
+        assertEquals(Math.round(dollars * 0.93), result);
     }
 
     @Test
     public void convert_EuroToDollar() throws Exception {
         int euros = 20;
         int result = Utils.convertEuroToDollar(euros);
-        assertEquals(Math.round(euros / 0.92), result);
+        assertEquals(Math.round(euros / 0.93), result);
     }
 
     @Test
