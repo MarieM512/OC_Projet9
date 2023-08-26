@@ -19,23 +19,23 @@ import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.Naviga
 
 class MainActivity : ComponentActivity() {
 
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            PropertyDatabase::class.java,
-            "properties.db",
-        ).build()
-    }
+//    private val db by lazy {
+//        Room.databaseBuilder(
+//            applicationContext,
+//            PropertyDatabase::class.java,
+//            "properties.db",
+//        ).build()
+//    }
 
-    private val viewModel by viewModels<PropertyViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(db.dao) as T
-                }
-            }
-        },
-    )
+//    private val viewModel by viewModels<PropertyViewModel>(
+//        factoryProducer = {
+//            object : ViewModelProvider.Factory {
+//                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//                    return PropertyViewModel(db.dao) as T
+//                }
+//            }
+//        },
+//    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

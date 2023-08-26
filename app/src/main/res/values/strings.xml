@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Real Estate Manager</string>
+
+    <!-- Loan View -->
+    <string name="property_loan">Property loan</string>
+    <string name="description_loan">To simulate your monthly mortgage payments, enter the capital you want to borrow, the nominal rate and the duration of the credit in a year.</string>
+    <string name="contribution">Contribution</string>
+    <string name="rate">Rate</string>
+    <string name="duration">Duration</string>
+    <string name="simulate">Simulate</string>
+
 </resources>
