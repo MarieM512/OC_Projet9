@@ -19,8 +19,8 @@ import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.AddView
 import com.openclassrooms.realestatemanager.ui.FilterView
 import com.openclassrooms.realestatemanager.ui.ListView
-import com.openclassrooms.realestatemanager.ui.LoanView
 import com.openclassrooms.realestatemanager.ui.MapView
+import com.openclassrooms.realestatemanager.ui.loan.LoanScreen
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
@@ -38,7 +38,7 @@ fun NavigationGraph(navController: NavHostController) {
             FilterView()
         }
         composable(BottomNavItem.Loan.route) {
-            LoanView()
+            LoanScreen()
         }
     }
 }

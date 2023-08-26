@@ -7,5 +7,6 @@
     <string name="contribution">Contribution</string>
     <string name="rate">Rate</string>
     <string name="duration">Duration</string>
+    <string name="simulate">Simulate</string>
 
 </resources>

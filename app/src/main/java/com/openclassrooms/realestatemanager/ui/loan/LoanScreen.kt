@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.ui
+package com.openclassrooms.realestatemanager.ui.loan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -19,12 +19,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,22 +31,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.Utils
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoanView() {
-    var contribution by rememberSaveable { mutableStateOf("") }
-    var rate by rememberSaveable { mutableStateOf("") }
-    var duration by rememberSaveable { mutableStateOf("") }
-    var result by rememberSaveable { mutableFloatStateOf(0.00F) }
-    var expanded by remember { mutableStateOf(false) }
-    val options = listOf("$", "€")
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
+fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
+    val loanUiState by loanViewModel.uiState.collectAsState()
 
     AppTheme {
         Column(
@@ -80,16 +68,16 @@ fun LoanView() {
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 TextField(
-                    value = contribution,
-                    onValueChange = { contribution = it },
+                    value = loanUiState.contribution,
+                    onValueChange = { loanViewModel.updateContribution(it) },
                     label = { Text(stringResource(id = R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                     singleLine = true,
                     modifier = Modifier.weight(2f),
                 )
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
+                    expanded = loanUiState.expanded,
+                    onExpandedChange = { loanViewModel.updateExpanded(!loanUiState.expanded) },
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1f),
@@ -97,22 +85,25 @@ fun LoanView() {
                     TextField(
                         modifier = Modifier.menuAnchor(),
                         readOnly = true,
-                        value = selectedOptionText,
+                        value = loanUiState.selectedOptionText,
                         onValueChange = {},
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = loanUiState.expanded) },
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     )
                     ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
+                        expanded = loanUiState.expanded,
+                        onDismissRequest = { loanViewModel.updateExpanded(false) },
                     ) {
-                        options.forEach { selectionOption ->
+                        loanUiState.options.forEach { selectionOption ->
                             DropdownMenuItem(
                                 text = { Text(selectionOption) },
                                 onClick = {
-                                    selectedOptionText = selectionOption
-                                    expanded = false
+                                    loanViewModel.updateSelectedOptionText(selectionOption)
+                                    loanViewModel.updateExpanded(false)
+                                    if (loanUiState.result != 0.00F && loanViewModel.isAllFieldsAreNotEmpty()) {
+                                        loanViewModel.loanSimulate()
+                                    }
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             )
@@ -122,8 +113,8 @@ fun LoanView() {
             }
 
             TextField(
-                value = rate,
-                onValueChange = { rate = it },
+                value = loanUiState.rate,
+                onValueChange = { loanViewModel.updateRate(it) },
                 label = { Text(stringResource(id = R.string.rate)) },
                 trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = "contribution") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
@@ -133,8 +124,8 @@ fun LoanView() {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
             TextField(
-                value = duration,
-                onValueChange = { duration = it },
+                value = loanUiState.duration,
+                onValueChange = { loanViewModel.updateDuration(it) },
                 label = { Text(stringResource(id = R.string.duration)) },
                 trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = "contribution") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
@@ -144,7 +135,7 @@ fun LoanView() {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
             Text(
-                text = "$result $selectedOptionText",
+                text = "${loanUiState.result} ${loanUiState.selectedOptionText}",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp, start = 16.dp, end = 16.dp, top = 16.dp),
@@ -156,24 +147,18 @@ fun LoanView() {
                     .fillMaxHeight(),
             ) {
                 Button(
-                    onClick = {
-                        val c = if (selectedOptionText == "$") {
-                            Utils.convertEuroToDollar(contribution.toInt())
-                        } else {
-                            contribution.toInt()
-                        }
-                        val r = (rate.toFloat() / 100) / 12
-                        val d = duration.toInt() * 12
-                        result = ((((c * r) / (1 - (1 / ((1 + r).pow(d))))) * 100).roundToInt() / 100.0).toFloat()
-                    },
+                    onClick = { loanViewModel.loanSimulate() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.BottomCenter)
+                        .size(50.dp),
+                    enabled = loanViewModel.isAllFieldsAreNotEmpty()
                 ) {
                     Text(
-                        text = "Simulate",
+                        text = stringResource(id = R.string.simulate),
                         textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
                     )
                 }
             }
@@ -184,5 +169,5 @@ fun LoanView() {
 @Preview
 @Composable
 fun Preview() {
-    LoanView()
+    LoanScreen()
 }
