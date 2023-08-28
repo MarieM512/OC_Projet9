@@ -5,7 +5,6 @@ data class LoanUiState(
     var rate: String = "",
     var duration: String = "",
     var result: Float = 0.00F,
-    var expanded: Boolean = false,
     val options: List<String> = listOf("$", "€"),
     var selectedOptionText: String = options[0]
 )

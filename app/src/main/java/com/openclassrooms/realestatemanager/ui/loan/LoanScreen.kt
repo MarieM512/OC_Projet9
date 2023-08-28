@@ -21,6 +21,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,6 +42,7 @@ import com.openclassrooms.realestatemanager.theme.AppTheme
 @Composable
 fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
     val loanUiState by loanViewModel.uiState.collectAsState()
+    var expanded by remember { mutableStateOf(false) }
 
     AppTheme {
         Column(
@@ -76,8 +80,8 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                     modifier = Modifier.weight(2f),
                 )
                 ExposedDropdownMenuBox(
-                    expanded = loanUiState.expanded,
-                    onExpandedChange = { loanViewModel.updateExpanded(!loanUiState.expanded) },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1f),
@@ -87,20 +91,20 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                         readOnly = true,
                         value = loanUiState.selectedOptionText,
                         onValueChange = {},
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = loanUiState.expanded) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     )
                     ExposedDropdownMenu(
-                        expanded = loanUiState.expanded,
-                        onDismissRequest = { loanViewModel.updateExpanded(false) },
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
                     ) {
                         loanUiState.options.forEach { selectionOption ->
                             DropdownMenuItem(
                                 text = { Text(selectionOption) },
                                 onClick = {
                                     loanViewModel.updateSelectedOptionText(selectionOption)
-                                    loanViewModel.updateExpanded(false)
+                                    expanded = false
                                     if (loanUiState.result != 0.00F && loanViewModel.isAllFieldsAreNotEmpty()) {
                                         loanViewModel.loanSimulate()
                                     }
@@ -153,7 +157,7 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                         .align(Alignment.BottomCenter)
                         .size(50.dp),
-                    enabled = loanViewModel.isAllFieldsAreNotEmpty()
+                    enabled = loanViewModel.isAllFieldsAreNotEmpty(),
                 ) {
                     Text(
                         text = stringResource(id = R.string.simulate),

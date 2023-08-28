@@ -38,12 +38,6 @@ class LoanViewModel : ViewModel() {
         }
     }
 
-    fun updateExpanded(value: Boolean) {
-        _uiState.update {
-            it.copy(expanded = value)
-        }
-    }
-
     fun loanSimulate() {
         val c = if (uiState.value.selectedOptionText == "$") {
             Utils.convertEuroToDollar(uiState.value.contribution.toInt())
