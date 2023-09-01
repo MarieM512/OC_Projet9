@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.add
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
@@ -13,6 +14,18 @@ class AddViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddUiState())
     val uiState: StateFlow<AddUiState> = _uiState.asStateFlow()
+
+    fun updateImage(value: Uri) {
+        _uiState.update {
+            val image: MutableList<Uri> = it.image
+            if (image.contains(value)) {
+                image.remove(value)
+            } else {
+                image.add(value)
+            }
+            it.copy(image = image)
+        }
+    }
 
     fun updateType(value: PropertyType) {
         _uiState.update {
@@ -69,6 +82,6 @@ class AddViewModel : ViewModel() {
     }
 
     fun addProperty() {
-        println("near: ${uiState.value.nearInterestPoint} - type: ${uiState.value.type} - price: ${uiState.value.price} - surface: ${uiState.value.surface} - number: ${uiState.value.pieceNumber} - agent: ${uiState.value.agent} - address: ${uiState.value.address} - description: ${uiState.value.description}")
+        println("image: ${uiState.value.image} - near: ${uiState.value.nearInterestPoint} - type: ${uiState.value.type} - price: ${uiState.value.price} - surface: ${uiState.value.surface} - number: ${uiState.value.pieceNumber} - agent: ${uiState.value.agent} - address: ${uiState.value.address} - description: ${uiState.value.description}")
     }
 }

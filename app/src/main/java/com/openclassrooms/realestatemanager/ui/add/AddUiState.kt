@@ -1,10 +1,12 @@
 package com.openclassrooms.realestatemanager.ui.add
 
+import android.net.Uri
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
 import com.openclassrooms.realestatemanager.database.PropertyType
 
 data class AddUiState(
+    var image: MutableList<Uri> = mutableListOf(),
     var type: PropertyType = PropertyType.HOUSE,
     var surface: Int = 0,
     var pieceNumber: Int = 0,

@@ -1,8 +1,13 @@
 package com.openclassrooms.realestatemanager.ui.add
 
-import androidx.compose.foundation.clickable
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,12 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -24,6 +33,8 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,17 +47,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
@@ -60,6 +70,16 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
+    val selectedImageUris = remember { mutableStateListOf<Uri>() }
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                selectedImageUris.add(uri)
+                addViewModel.updateImage(uri)
+            }
+        },
+    )
 
     AppTheme {
         LazyColumn(
@@ -69,12 +89,78 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
             contentPadding = PaddingValues(all = 16.dp),
         ) {
             item {
-                Icon(
-                    painterResource(id = R.drawable.icons8_accueil),
-                    contentDescription = "image",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                )
+                Row {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Button(
+                            onClick = {
+                                println("picture")
+                            },
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_picture),
+                                contentDescription = "Take a picture",
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp),
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                multiplePhotoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 8.dp),
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_image),
+                                contentDescription = "Add a picture",
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp),
+                            )
+                        }
+                    }
+                    Divider(
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .height(120.dp)
+                            .width(2.dp),
+                    )
+                    LazyRow() {
+                        item {
+                            selectedImageUris.forEach { uri ->
+                                Box(
+                                    contentAlignment = Alignment.TopEnd,
+                                    modifier = Modifier
+                                        .padding(end = 4.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = uri,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .height(120.dp),
+                                    )
+                                    SmallFloatingActionButton(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .size(20.dp),
+                                        shape = CircleShape,
+                                        onClick = {
+                                            selectedImageUris.remove(uri)
+                                            addViewModel.updateImage(uri)
+                                        },
+                                    ) {
+                                        Icon(Icons.Filled.Clear, "Delete picture")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 LazyRow {
                     item {
                         InterestPoint.values().forEach { interest ->
@@ -249,31 +335,6 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ReadonlyTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Box {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = modifier,
-            label = label,
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .alpha(0f)
-                .clickable(onClick = onClick),
-        )
     }
 }
 
