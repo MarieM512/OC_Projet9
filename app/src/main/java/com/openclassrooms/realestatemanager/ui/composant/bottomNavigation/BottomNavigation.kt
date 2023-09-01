@@ -16,10 +16,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import com.openclassrooms.realestatemanager.ui.AddView
 import com.openclassrooms.realestatemanager.ui.FilterView
 import com.openclassrooms.realestatemanager.ui.ListView
 import com.openclassrooms.realestatemanager.ui.MapView
+import com.openclassrooms.realestatemanager.ui.add.AddScreen
 import com.openclassrooms.realestatemanager.ui.loan.LoanScreen
 
 @Composable
@@ -32,7 +32,7 @@ fun NavigationGraph(navController: NavHostController) {
             ListView()
         }
         composable(BottomNavItem.Add.route) {
-            AddView()
+            AddScreen()
         }
         composable(BottomNavItem.Filter.route) {
             FilterView()

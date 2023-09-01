@@ -71,7 +71,6 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     TextField(
                         value = loanUiState.contribution,
