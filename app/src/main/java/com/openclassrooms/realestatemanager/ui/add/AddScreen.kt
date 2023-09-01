@@ -1,10 +1,10 @@
 package com.openclassrooms.realestatemanager.ui.add
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,8 +45,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -55,15 +55,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.theme.AppTheme
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalPermissionsApi::class,
+)
 @Composable
 fun AddScreen(addViewModel: AddViewModel = viewModel()) {
     val addUiState by addViewModel.uiState.collectAsState()
@@ -80,6 +93,14 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
             }
         },
     )
+    val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+    val context = LocalContext.current
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file)
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        selectedImageUris.add(uri)
+        addViewModel.updateImage(uri)
+    }
 
     AppTheme {
         LazyColumn(
@@ -95,7 +116,11 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                     ) {
                         Button(
                             onClick = {
-                                println("picture")
+                                if (cameraPermissionState.status.isGranted) {
+                                    cameraLauncher.launch(uri)
+                                } else {
+                                    cameraPermissionState.launchPermissionRequest()
+                                }
                             },
                         ) {
                             Icon(
@@ -135,7 +160,7 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                                 Box(
                                     contentAlignment = Alignment.TopEnd,
                                     modifier = Modifier
-                                        .padding(end = 4.dp)
+                                        .padding(end = 4.dp),
                                 ) {
                                     AsyncImage(
                                         model = uri,
@@ -336,6 +361,16 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
             }
         }
     }
+}
+
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    return File.createTempFile(
+        imageFileName,
+        ".jpg",
+        externalCacheDir,
+    )
 }
 
 @Preview
