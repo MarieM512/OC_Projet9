@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.Picture
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
@@ -42,13 +41,6 @@ class PropertyViewModel(
 
     fun onEvent(event: PropertyEvent) {
         when (event) {
-            PropertyEvent.HideDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingProperty = false,
-                    )
-                }
-            }
 
             PropertyEvent.SaveProperty -> {
                 val type = _state.value.type
@@ -91,24 +83,19 @@ class PropertyViewModel(
                 }
                 _state.update { it.copy(
                     isAddingProperty = false,
-//                    type = PropertyType.DETACHED_HOUSE,
-                    type = "",
+                    type = PropertyType.HOUSE,
                     price = 0,
                     surface = 0,
                     pieceNumber = 0,
                     description = "",
-//                    picture = Picture(0,0, ""),
-                    picture = "",
+                    picture = emptyList(),
                     address = "",
                     location = "",
-//                    nearInterestPoint = emptyList(),
-                    nearInterestPoint = "",
-//                    status = Status.AVAILABLE,
-                    status = "",
+                    nearInterestPoint = emptyList(),
+                    status = Status.AVAILABLE,
                     entryDate = "",
                     soldDate = "",
-//                    agent = Agent.STEPHANE_PLAZA
-                    agent = ""
+                    agent = Agent.STEPHANE_PLAZA
                 ) }
             }
 
@@ -218,14 +205,6 @@ class PropertyViewModel(
 
             is PropertyEvent.SortProperty -> {
                 _sortType.value = event.sortType
-            }
-
-            PropertyEvent.ShowDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingProperty = true,
-                    )
-                }
             }
         }
     }
