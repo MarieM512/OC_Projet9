@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ViewModel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.Agent
@@ -17,6 +18,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class PropertyViewModel(
     private val dao: PropertyDao,
@@ -39,6 +44,7 @@ class PropertyViewModel(
     )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PropertyState())
 
+    @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
 
@@ -53,12 +59,11 @@ class PropertyViewModel(
                 val location = _state.value.location
                 val nearInterestPoint = _state.value.nearInterestPoint
                 val status = _state.value.status
-                val entryDate = _state.value.entryDate
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
 
                 if (
-                    description.isBlank() || address.isBlank() || location.isBlank() || entryDate.isBlank() || soldDate.isBlank()
+                    description.isBlank() || address.isBlank()
                 ) {
                     return
                 }
@@ -74,7 +79,7 @@ class PropertyViewModel(
                     location = location,
                     nearInterestPoint = nearInterestPoint,
                     status = status,
-                    entryDate = entryDate,
+                    entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
                     soldDate = soldDate,
                     agent = agent
                 )
@@ -119,14 +124,6 @@ class PropertyViewModel(
                 _state.update {
                     it.copy(
                         description = event.description,
-                    )
-                }
-            }
-
-            is PropertyEvent.SetEntryDate -> {
-                _state.update {
-                    it.copy(
-                        entryDate = event.entryDate,
                     )
                 }
             }
@@ -206,6 +203,8 @@ class PropertyViewModel(
             is PropertyEvent.SortProperty -> {
                 _sortType.value = event.sortType
             }
+
+            else -> {}
         }
     }
 }

@@ -38,7 +38,6 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,11 +51,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -66,6 +63,8 @@ import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
+import com.openclassrooms.realestatemanager.database.PropertyEvent
+import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import java.io.File
@@ -78,8 +77,12 @@ import java.util.Objects
     ExperimentalPermissionsApi::class,
 )
 @Composable
-fun AddScreen(addViewModel: AddViewModel = viewModel()) {
-    val addUiState by addViewModel.uiState.collectAsState()
+fun AddScreen(
+//    addViewModel: AddViewModel = viewModel()
+    state: PropertyState,
+    onEvent: (PropertyEvent) -> Unit,
+) {
+//    val addUiState by addViewModel.uiState.collectAsState()
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
@@ -89,7 +92,7 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
         onResult = { uri ->
             if (uri != null) {
                 selectedImageUris.add(uri)
-                addViewModel.updateImage(uri)
+//                addViewModel.updateImage(uri)
             }
         },
     )
@@ -99,7 +102,7 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
     val uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
         selectedImageUris.add(uri)
-        addViewModel.updateImage(uri)
+//        addViewModel.updateImage(uri)
     }
 
     AppTheme {
@@ -176,7 +179,7 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                                         shape = CircleShape,
                                         onClick = {
                                             selectedImageUris.remove(uri)
-                                            addViewModel.updateImage(uri)
+//                                            addViewModel.updateImage(uri)
                                         },
                                     ) {
                                         Icon(Icons.Filled.Clear, "Delete picture")
@@ -192,7 +195,7 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                             FilterChip(
                                 onClick = {
                                     if (chip.contains(interest)) chip.remove(interest) else chip.add(interest)
-                                    addViewModel.updateInterestPoint(interest)
+//                                    addViewModel.updateInterestPoint(interest)
                                 },
                                 label = { Text(text = interest.label) },
                                 selected = chip.contains(interest),
@@ -231,7 +234,8 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                                 .fillMaxWidth()
                                 .menuAnchor(),
                             readOnly = true,
-                            value = addUiState.type.label,
+//                            value = addUiState.type.label,
+                            value = state.type.label,
                             onValueChange = {},
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -245,7 +249,8 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                                 DropdownMenuItem(
                                     text = { Text(type.label) },
                                     onClick = {
-                                        addViewModel.updateType(type)
+//                                        addViewModel.updateType(type)
+                                        onEvent(PropertyEvent.SetType(type))
                                         typeExpanded = false
                                     },
                                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -254,8 +259,12 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                         }
                     }
                     TextField(
-                        value = addUiState.price.toString(),
-                        onValueChange = { addViewModel.updatePrice(it.toInt()) },
+//                        value = addUiState.price.toString(),
+                        value = state.price.toString(),
+                        onValueChange = {
+//                            addViewModel.updatePrice(it.toInt())
+                            onEvent(PropertyEvent.SetPrice(it.toInt()))
+                        },
                         label = { Text(stringResource(id = R.string.price)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                         modifier = Modifier
@@ -269,16 +278,24 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                         .fillMaxWidth(),
                 ) {
                     TextField(
-                        value = addUiState.surface.toString(),
-                        onValueChange = { addViewModel.updateSurface(it.toInt()) },
+//                        value = addUiState.surface.toString(),
+                        value = state.surface.toString(),
+                        onValueChange = {
+//                            addViewModel.updateSurface(it.toInt())
+                            onEvent(PropertyEvent.SetSurface(it.toInt()))
+                        },
                         label = { Text(stringResource(id = R.string.surface)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                     )
                     TextField(
-                        value = addUiState.pieceNumber.toString(),
-                        onValueChange = { addViewModel.updatePieceNumber(it.toInt()) },
+//                        value = addUiState.pieceNumber.toString(),
+                        value = state.pieceNumber.toString(),
+                        onValueChange = {
+//                            addViewModel.updatePieceNumber(it.toInt())
+                            onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
+                        },
                         label = { Text(stringResource(id = R.string.piece_number)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                         singleLine = true,
@@ -297,7 +314,8 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                             .fillMaxWidth()
                             .menuAnchor(),
                         readOnly = true,
-                        value = addUiState.agent.label,
+//                        value = addUiState.agent.label,
+                        value = state.agent.label,
                         onValueChange = {},
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = agentExpanded) },
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -311,7 +329,8 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                             DropdownMenuItem(
                                 text = { Text(agent.label) },
                                 onClick = {
-                                    addViewModel.updateAgent(agent)
+//                                    addViewModel.updateAgent(agent)
+                                    onEvent(PropertyEvent.SetAgent(agent))
                                     agentExpanded = false
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -320,8 +339,12 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                     }
                 }
                 TextField(
-                    value = addUiState.address,
-                    onValueChange = { addViewModel.updateAddress(it) },
+//                    value = addUiState.address,
+                    value = state.address,
+                    onValueChange = {
+//                        addViewModel.updateAddress(it)
+                        onEvent(PropertyEvent.SetAddress(it))
+                    },
                     label = { Text(stringResource(id = R.string.address)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
                     modifier = Modifier
@@ -329,8 +352,12 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                         .fillMaxWidth(),
                 )
                 TextField(
-                    value = addUiState.description,
-                    onValueChange = { addViewModel.updateDescription(it) },
+//                    value = addUiState.description,
+                    value = state.description,
+                    onValueChange = {
+//                        addViewModel.updateDescription(it)
+                        onEvent(PropertyEvent.SetDescription(it))
+                    },
                     label = { Text(stringResource(id = R.string.description)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                     modifier = Modifier
@@ -345,7 +372,10 @@ fun AddScreen(addViewModel: AddViewModel = viewModel()) {
                         .fillMaxHeight(),
                 ) {
                     Button(
-                        onClick = { addViewModel.addProperty() },
+                        onClick = {
+//                            addViewModel.addProperty()
+                            onEvent(PropertyEvent.SaveProperty)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
@@ -371,10 +401,4 @@ fun Context.createImageFile(): File {
         ".jpg",
         externalCacheDir,
     )
-}
-
-@Preview
-@Composable
-fun Preview() {
-    AddScreen()
 }
