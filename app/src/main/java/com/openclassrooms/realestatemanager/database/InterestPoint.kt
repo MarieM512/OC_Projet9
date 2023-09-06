@@ -1,5 +1,13 @@
 package com.openclassrooms.realestatemanager.database
 
-enum class InterestPoint {
-    SCHOOL, SHOP, PARK, PHARMACY, BAKERY, GROCERY_STORE, VETERINARY, DOCTOR, GARAGE
+enum class InterestPoint(val label: String) {
+    SCHOOL("School"),
+    SHOP("Shop"),
+    PARK("Park"),
+    PHARMACY("Pharmacy"),
+    BAKERY("Bakery"),
+    GROCERY_STORE("Grocery store"),
+    VETERINARY("Veterinary"),
+    DOCTOR("Doctor"),
+    GARAGE("Garage"),
 }

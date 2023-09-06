@@ -28,13 +28,6 @@ fun PropertyScreen(
     onEvent: (PropertyEvent) -> Unit,
 ) {
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onEvent(PropertyEvent.ShowDialog)
-            }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Property")
-            }
-        },
         modifier = Modifier.padding(16.dp)
     ) { padding ->
         LazyColumn(

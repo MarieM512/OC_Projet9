@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.loan
 
 import androidx.lifecycle.ViewModel
-import com.openclassrooms.realestatemanager.Utils
+import com.openclassrooms.realestatemanager.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,12 +35,6 @@ class LoanViewModel : ViewModel() {
     fun updateSelectedOptionText(value: String) {
         _uiState.update {
             it.copy(selectedOptionText = value)
-        }
-    }
-
-    fun updateExpanded(value: Boolean) {
-        _uiState.update {
-            it.copy(expanded = value)
         }
     }
 

@@ -1,9 +1,11 @@
 package com.openclassrooms.realestatemanager.ViewModel
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.Picture
+import com.openclassrooms.realestatemanager.database.InterestPoint
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
@@ -18,6 +20,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class PropertyViewModel(
     private val dao: PropertyDao,
@@ -26,7 +30,7 @@ class PropertyViewModel(
     private val _sortType = MutableStateFlow(SortType.ENTRY_DATE)
     private val _properties = _sortType
         .flatMapLatest { sortType ->
-            when(sortType) {
+            when (sortType) {
                 SortType.ENTRY_DATE -> dao.getPropertiesOrderedByEntryDate()
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -34,22 +38,15 @@ class PropertyViewModel(
     private val _state = MutableStateFlow(PropertyState())
 
     val state = combine(_state, _sortType, _properties) { state, sortType, properties ->
-    state.copy(
-        property = properties,
-        sortType = sortType
-    )
+        state.copy(
+            property = properties,
+            sortType = sortType,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PropertyState())
 
+    @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
-            PropertyEvent.HideDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingProperty = false,
-                    )
-                }
-            }
-
             PropertyEvent.SaveProperty -> {
                 val type = _state.value.type
                 val price = _state.value.price
@@ -61,12 +58,11 @@ class PropertyViewModel(
                 val location = _state.value.location
                 val nearInterestPoint = _state.value.nearInterestPoint
                 val status = _state.value.status
-                val entryDate = _state.value.entryDate
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
 
                 if (
-                    description.isBlank() || address.isBlank() || location.isBlank() || entryDate.isBlank() || soldDate.isBlank()
+                    description.isBlank() || address.isBlank()
                 ) {
                     return
                 }
@@ -82,34 +78,31 @@ class PropertyViewModel(
                     location = location,
                     nearInterestPoint = nearInterestPoint,
                     status = status,
-                    entryDate = entryDate,
+                    entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
                     soldDate = soldDate,
-                    agent = agent
+                    agent = agent,
                 )
                 viewModelScope.launch {
                     dao.upsertProperty(property)
                 }
-                _state.update { it.copy(
-                    isAddingProperty = false,
-//                    type = PropertyType.DETACHED_HOUSE,
-                    type = "",
-                    price = 0,
-                    surface = 0,
-                    pieceNumber = 0,
-                    description = "",
-//                    picture = Picture(0,0, ""),
-                    picture = "",
-                    address = "",
-                    location = "",
-//                    nearInterestPoint = emptyList(),
-                    nearInterestPoint = "",
-//                    status = Status.AVAILABLE,
-                    status = "",
-                    entryDate = "",
-                    soldDate = "",
-//                    agent = Agent.STEPHANE_PLAZA
-                    agent = ""
-                ) }
+                _state.update {
+                    it.copy(
+                        isAddingProperty = false,
+                        type = PropertyType.HOUSE,
+                        price = 0,
+                        surface = 0,
+                        pieceNumber = 0,
+                        description = "",
+                        picture = mutableListOf(),
+                        address = "",
+                        location = "",
+                        nearInterestPoint = mutableListOf(),
+                        status = Status.AVAILABLE,
+                        entryDate = "",
+                        soldDate = "",
+                        agent = Agent.STEPHANE_PLAZA,
+                    )
+                }
             }
 
             is PropertyEvent.SetAddress -> {
@@ -136,14 +129,6 @@ class PropertyViewModel(
                 }
             }
 
-            is PropertyEvent.SetEntryDate -> {
-                _state.update {
-                    it.copy(
-                        entryDate = event.entryDate,
-                    )
-                }
-            }
-
             is PropertyEvent.SetLocation -> {
                 _state.update {
                     it.copy(
@@ -154,17 +139,25 @@ class PropertyViewModel(
 
             is PropertyEvent.SetNearInterestPoint -> {
                 _state.update {
-                    it.copy(
-                        nearInterestPoint = event.nearInterestPoint,
-                    )
+                    val near: MutableList<InterestPoint> = it.nearInterestPoint
+                    if (near.contains(event.nearInterestPoint)) {
+                        near.remove(event.nearInterestPoint)
+                    } else {
+                        near.add(event.nearInterestPoint)
+                    }
+                    it.copy(nearInterestPoint = near)
                 }
             }
 
             is PropertyEvent.SetPicture -> {
                 _state.update {
-                    it.copy(
-                        picture = event.picture,
-                    )
+                    val image: MutableList<Uri> = it.picture
+                    if (image.contains(event.picture)) {
+                        image.remove(event.picture)
+                    } else {
+                        image.add(event.picture)
+                    }
+                    it.copy(picture = image)
                 }
             }
 
@@ -218,14 +211,6 @@ class PropertyViewModel(
 
             is PropertyEvent.SortProperty -> {
                 _sortType.value = event.sortType
-            }
-
-            PropertyEvent.ShowDialog -> {
-                _state.update {
-                    it.copy(
-                        isAddingProperty = true,
-                    )
-                }
             }
         }
     }
