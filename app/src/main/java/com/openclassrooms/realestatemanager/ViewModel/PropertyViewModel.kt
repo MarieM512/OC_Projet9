@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ViewModel
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.Agent
@@ -93,10 +94,10 @@ class PropertyViewModel(
                     surface = 0,
                     pieceNumber = 0,
                     description = "",
-                    picture = emptyList(),
+                    picture = mutableListOf(),
                     address = "",
                     location = "",
-                    nearInterestPoint = emptyList(),
+                    nearInterestPoint = mutableListOf(),
                     status = Status.AVAILABLE,
                     entryDate = "",
                     soldDate = "",
@@ -139,16 +140,20 @@ class PropertyViewModel(
             is PropertyEvent.SetNearInterestPoint -> {
                 _state.update {
                     it.copy(
-                        nearInterestPoint = event.nearInterestPoint,
+//                        nearInterestPoint = event.nearInterestPoint,
                     )
                 }
             }
 
             is PropertyEvent.SetPicture -> {
                 _state.update {
-                    it.copy(
-                        picture = event.picture,
-                    )
+                    val image: MutableList<Uri> = it.picture
+                    if (image.contains(event.picture)) {
+                        image.remove(event.picture)
+                    } else {
+                        image.add(event.picture)
+                    }
+                    it.copy(picture = image)
                 }
             }
 

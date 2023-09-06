@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
+import com.openclassrooms.realestatemanager.utils.Converters
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomBar
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.NavigationGraph
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
             PropertyDatabase::class.java,
             "properties.db",
         )
+            .addTypeConverter(Converters())
             .build()
     }
 

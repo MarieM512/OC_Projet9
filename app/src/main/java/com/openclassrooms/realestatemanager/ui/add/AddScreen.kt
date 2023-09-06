@@ -78,11 +78,9 @@ import java.util.Objects
 )
 @Composable
 fun AddScreen(
-//    addViewModel: AddViewModel = viewModel()
     state: PropertyState,
     onEvent: (PropertyEvent) -> Unit,
 ) {
-//    val addUiState by addViewModel.uiState.collectAsState()
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
@@ -92,7 +90,7 @@ fun AddScreen(
         onResult = { uri ->
             if (uri != null) {
                 selectedImageUris.add(uri)
-//                addViewModel.updateImage(uri)
+                onEvent(PropertyEvent.SetPicture(uri))
             }
         },
     )
@@ -102,7 +100,7 @@ fun AddScreen(
     val uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
         selectedImageUris.add(uri)
-//        addViewModel.updateImage(uri)
+        onEvent(PropertyEvent.SetPicture(uri))
     }
 
     AppTheme {
@@ -179,7 +177,7 @@ fun AddScreen(
                                         shape = CircleShape,
                                         onClick = {
                                             selectedImageUris.remove(uri)
-//                                            addViewModel.updateImage(uri)
+                                            onEvent(PropertyEvent.SetPicture(uri))
                                         },
                                     ) {
                                         Icon(Icons.Filled.Clear, "Delete picture")
@@ -234,7 +232,6 @@ fun AddScreen(
                                 .fillMaxWidth()
                                 .menuAnchor(),
                             readOnly = true,
-//                            value = addUiState.type.label,
                             value = state.type.label,
                             onValueChange = {},
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
@@ -249,7 +246,6 @@ fun AddScreen(
                                 DropdownMenuItem(
                                     text = { Text(type.label) },
                                     onClick = {
-//                                        addViewModel.updateType(type)
                                         onEvent(PropertyEvent.SetType(type))
                                         typeExpanded = false
                                     },
@@ -259,10 +255,8 @@ fun AddScreen(
                         }
                     }
                     TextField(
-//                        value = addUiState.price.toString(),
                         value = state.price.toString(),
                         onValueChange = {
-//                            addViewModel.updatePrice(it.toInt())
                             onEvent(PropertyEvent.SetPrice(it.toInt()))
                         },
                         label = { Text(stringResource(id = R.string.price)) },
@@ -278,10 +272,8 @@ fun AddScreen(
                         .fillMaxWidth(),
                 ) {
                     TextField(
-//                        value = addUiState.surface.toString(),
                         value = state.surface.toString(),
                         onValueChange = {
-//                            addViewModel.updateSurface(it.toInt())
                             onEvent(PropertyEvent.SetSurface(it.toInt()))
                         },
                         label = { Text(stringResource(id = R.string.surface)) },
@@ -290,10 +282,8 @@ fun AddScreen(
                         modifier = Modifier.weight(1f),
                     )
                     TextField(
-//                        value = addUiState.pieceNumber.toString(),
                         value = state.pieceNumber.toString(),
                         onValueChange = {
-//                            addViewModel.updatePieceNumber(it.toInt())
                             onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
                         },
                         label = { Text(stringResource(id = R.string.piece_number)) },
@@ -314,7 +304,6 @@ fun AddScreen(
                             .fillMaxWidth()
                             .menuAnchor(),
                         readOnly = true,
-//                        value = addUiState.agent.label,
                         value = state.agent.label,
                         onValueChange = {},
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = agentExpanded) },
@@ -329,7 +318,6 @@ fun AddScreen(
                             DropdownMenuItem(
                                 text = { Text(agent.label) },
                                 onClick = {
-//                                    addViewModel.updateAgent(agent)
                                     onEvent(PropertyEvent.SetAgent(agent))
                                     agentExpanded = false
                                 },
@@ -339,10 +327,8 @@ fun AddScreen(
                     }
                 }
                 TextField(
-//                    value = addUiState.address,
                     value = state.address,
                     onValueChange = {
-//                        addViewModel.updateAddress(it)
                         onEvent(PropertyEvent.SetAddress(it))
                     },
                     label = { Text(stringResource(id = R.string.address)) },
@@ -352,10 +338,8 @@ fun AddScreen(
                         .fillMaxWidth(),
                 )
                 TextField(
-//                    value = addUiState.description,
                     value = state.description,
                     onValueChange = {
-//                        addViewModel.updateDescription(it)
                         onEvent(PropertyEvent.SetDescription(it))
                     },
                     label = { Text(stringResource(id = R.string.description)) },
@@ -373,7 +357,7 @@ fun AddScreen(
                 ) {
                     Button(
                         onClick = {
-//                            addViewModel.addProperty()
+                            selectedImageUris.clear()
                             onEvent(PropertyEvent.SaveProperty)
                         },
                         modifier = Modifier

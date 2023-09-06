@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.openclassrooms.realestatemanager.utils.Utils;
+
 
 /**
  * Instrumented test, which will execute on an Android device.

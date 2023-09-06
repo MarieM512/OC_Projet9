@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.loan
 
 import androidx.lifecycle.ViewModel
-import com.openclassrooms.realestatemanager.Utils
+import com.openclassrooms.realestatemanager.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

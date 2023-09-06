@@ -9,12 +9,11 @@ sealed interface PropertyEvent {
     data class SetSurface(val surface: Int) : PropertyEvent
     data class SetPieceNumber(val pieceNumber: Int) : PropertyEvent
     data class SetDescription(val description: String) : PropertyEvent
-    data class SetPicture(val picture: List<Uri>) : PropertyEvent
+    data class SetPicture(val picture: Uri) : PropertyEvent
     data class SetAddress(val address: String) : PropertyEvent
     data class SetLocation(val location: String) : PropertyEvent
     data class SetNearInterestPoint(val nearInterestPoint: List<InterestPoint>) : PropertyEvent
     data class SetStatus(val status: Status) : PropertyEvent
-    data class SetEntryDate(val entryDate: String) : PropertyEvent
     data class SetSoldDate(val soldDate: String) : PropertyEvent
     data class SetAgent(val agent: Agent) : PropertyEvent
     data class SortProperty(val sortType: SortType) : PropertyEvent
