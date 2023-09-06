@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.add
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -193,7 +194,7 @@ fun AddScreen(
                             FilterChip(
                                 onClick = {
                                     if (chip.contains(interest)) chip.remove(interest) else chip.add(interest)
-//                                    addViewModel.updateInterestPoint(interest)
+                                    onEvent(PropertyEvent.SetNearInterestPoint(interest))
                                 },
                                 label = { Text(text = interest.label) },
                                 selected = chip.contains(interest),
@@ -358,6 +359,7 @@ fun AddScreen(
                     Button(
                         onClick = {
                             selectedImageUris.clear()
+                            chip.clear()
                             onEvent(PropertyEvent.SaveProperty)
                         },
                         modifier = Modifier
@@ -377,6 +379,7 @@ fun AddScreen(
     }
 }
 
+@SuppressLint("SimpleDateFormat")
 fun Context.createImageFile(): File {
     val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
     val imageFileName = "JPEG_" + timeStamp + "_"
