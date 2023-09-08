@@ -228,7 +228,9 @@ fun AddScreen(
                                         shape = CircleShape,
                                         onClick = {
                                             selectedImageUris.remove(image.first)
+                                            selectedImageTitles.remove(image.second)
                                             onEvent(PropertyEvent.SetUriPicture(image.first))
+                                            onEvent(PropertyEvent.SetTitlePicture(image.second))
                                         },
                                     ) {
                                         Icon(Icons.Filled.Clear, "Delete picture")
@@ -421,6 +423,7 @@ fun AddScreen(
                     Button(
                         onClick = {
                             selectedImageUris.clear()
+                            selectedImageTitles.clear()
                             chip.clear()
                             onEvent(PropertyEvent.SaveProperty)
                         },
