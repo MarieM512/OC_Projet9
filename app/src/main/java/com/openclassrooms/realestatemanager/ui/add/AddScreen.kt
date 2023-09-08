@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,12 +46,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
@@ -86,6 +89,7 @@ fun AddScreen(
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
     val selectedImageUris = remember { mutableStateListOf<Uri>() }
+    val selectedImageTitles = remember { mutableStateListOf<String>() }
     val openDialog = remember { mutableStateOf(false) }
     val takePicture = remember { mutableStateOf(false) }
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -93,6 +97,7 @@ fun AddScreen(
         onResult = { uri ->
             if (uri != null) {
                 selectedImageUris.add(ImageSave.saveImgInCache(context, uri))
+                selectedImageTitles.add(descriptionImage)
                 onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri)))
                 onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
                 descriptionImage = ""
@@ -100,10 +105,13 @@ fun AddScreen(
         },
     )
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-        uri?.let { it1 -> selectedImageUris.add(it1) }
-        uri?.let { it1 -> PropertyEvent.SetUriPicture(it1) }?.let { it2 -> onEvent(it2) }
-        onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
+        if (taken) {
+            uri?.let { it1 -> selectedImageUris.add(it1) }
+            selectedImageTitles.add(descriptionImage)
+            uri?.let { it1 -> PropertyEvent.SetUriPicture(it1) }?.let { it2 -> onEvent(it2) }
+            onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+        }
         descriptionImage = ""
     }
 
@@ -132,6 +140,20 @@ fun AddScreen(
                             Icon(
                                 painterResource(id = R.drawable.ic_picture),
                                 contentDescription = "Take a picture",
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp),
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                openDialog.value = true
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 8.dp),
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_image),
+                                contentDescription = "Add a picture",
                                 modifier = Modifier
                                     .padding(vertical = 8.dp),
                             )
@@ -176,20 +198,6 @@ fun AddScreen(
                                 },
                             )
                         }
-                        Button(
-                            onClick = {
-                                openDialog.value = true
-                            },
-                            modifier = Modifier
-                                .padding(bottom = 8.dp),
-                        ) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_image),
-                                contentDescription = "Add a picture",
-                                modifier = Modifier
-                                    .padding(vertical = 8.dp),
-                            )
-                        }
                     }
                     Divider(
                         color = MaterialTheme.colorScheme.secondary,
@@ -200,14 +208,14 @@ fun AddScreen(
                     )
                     LazyRow() {
                         item {
-                            selectedImageUris.forEach { uri ->
+                            selectedImageUris.zip(selectedImageTitles).forEach { image ->
                                 Box(
                                     contentAlignment = Alignment.TopEnd,
                                     modifier = Modifier
                                         .padding(end = 4.dp),
                                 ) {
                                     AsyncImage(
-                                        model = uri,
+                                        model = image.first,
                                         contentDescription = null,
                                         modifier = Modifier
                                             .height(120.dp),
@@ -219,12 +227,24 @@ fun AddScreen(
                                             .size(20.dp),
                                         shape = CircleShape,
                                         onClick = {
-                                            selectedImageUris.remove(uri)
-                                            onEvent(PropertyEvent.SetUriPicture(uri))
+                                            selectedImageUris.remove(image.first)
+                                            onEvent(PropertyEvent.SetUriPicture(image.first))
                                         },
                                     ) {
                                         Icon(Icons.Filled.Clear, "Delete picture")
                                     }
+                                    Text(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomCenter)
+                                            .background(MaterialTheme.colorScheme.secondary)
+                                            .fillMaxWidth()
+                                            .width(90.dp),
+                                        text = image.second,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center,
+                                    )
                                 }
                             }
                         }

@@ -1,35 +1,52 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Environment
-import android.util.Log
-import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import com.openclassrooms.realestatemanager.BuildConfig
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class Cache {
+object ImageSave {
+
+    private fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+        var bitmap: Bitmap? = null
+        try {
+            bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return bitmap
+    }
 
     @SuppressLint("SimpleDateFormat")
-    fun saveImgToCache(bitmap: Bitmap, context: Context): File {
-        val path = context.applicationContext.externalCacheDir
-        val cachePath = File(path, "img")
-
+    fun saveImgInCache(context: Context, uri: Uri): Uri {
+        val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
+        val file = File(context.externalCacheDir, "$timeStamp.png")
         try {
-            cachePath.mkdirs()
-
-            val stream = FileOutputStream("$cachePath /img.png")
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            stream.close()
+            val f = FileOutputStream(file)
+            uriToBitmap(context, uri)?.compress(Bitmap.CompressFormat.PNG, 100, f)
+            f.flush()
+            f.close()
         } catch (e: IOException) {
-            Log.e("Cache.class", "failed to save image to cache: $e")
+            println("failed")
         }
-        return cachePath
+        return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun createImageFile(context: Context): File {
+        val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
+        return File.createTempFile(
+            "${timeStamp}_",
+            ".png",
+            context.externalCacheDir,
+        )
     }
 }
