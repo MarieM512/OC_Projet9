@@ -1,7 +1,5 @@
 package com.openclassrooms.realestatemanager.ui.add
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -68,9 +66,7 @@ import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.openclassrooms.realestatemanager.utils.ImageSave
 import java.util.Objects
 
 @OptIn(
@@ -82,6 +78,9 @@ fun AddScreen(
     state: PropertyState,
     onEvent: (PropertyEvent) -> Unit,
 ) {
+    val context = LocalContext.current
+    var uri: Uri? = null
+
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
@@ -90,18 +89,15 @@ fun AddScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             if (uri != null) {
-                selectedImageUris.add(uri)
-                onEvent(PropertyEvent.SetPicture(uri))
+                selectedImageUris.add(ImageSave.saveImgInCache(context, uri))
+                onEvent(PropertyEvent.SetPicture(ImageSave.saveImgInCache(context, uri)))
             }
         },
     )
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-    val context = LocalContext.current
-    val file = context.createImageFile()
-    val uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-        selectedImageUris.add(uri)
-        onEvent(PropertyEvent.SetPicture(uri))
+        uri?.let { it1 -> selectedImageUris.add(it1) }
+        uri?.let { it1 -> PropertyEvent.SetPicture(it1) }?.let { it2 -> onEvent(it2) }
     }
 
     AppTheme {
@@ -119,6 +115,7 @@ fun AddScreen(
                         Button(
                             onClick = {
                                 if (cameraPermissionState.status.isGranted) {
+                                    uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
                                     cameraLauncher.launch(uri)
                                 } else {
                                     cameraPermissionState.launchPermissionRequest()
@@ -377,15 +374,4 @@ fun AddScreen(
             }
         }
     }
-}
-
-@SuppressLint("SimpleDateFormat")
-fun Context.createImageFile(): File {
-    val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
-    return File.createTempFile(
-        imageFileName,
-        ".jpg",
-        externalCacheDir,
-    )
 }
