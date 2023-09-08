@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
@@ -80,24 +81,30 @@ fun AddScreen(
 ) {
     val context = LocalContext.current
     var uri: Uri? = null
-
+    var descriptionImage by remember { mutableStateOf("") }
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
     val selectedImageUris = remember { mutableStateListOf<Uri>() }
+    val openDialog = remember { mutableStateOf(false) }
+    val takePicture = remember { mutableStateOf(false) }
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             if (uri != null) {
                 selectedImageUris.add(ImageSave.saveImgInCache(context, uri))
-                onEvent(PropertyEvent.SetPicture(ImageSave.saveImgInCache(context, uri)))
+                onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri)))
+                onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+                descriptionImage = ""
             }
         },
     )
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
         uri?.let { it1 -> selectedImageUris.add(it1) }
-        uri?.let { it1 -> PropertyEvent.SetPicture(it1) }?.let { it2 -> onEvent(it2) }
+        uri?.let { it1 -> PropertyEvent.SetUriPicture(it1) }?.let { it2 -> onEvent(it2) }
+        onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+        descriptionImage = ""
     }
 
     AppTheme {
@@ -115,8 +122,8 @@ fun AddScreen(
                         Button(
                             onClick = {
                                 if (cameraPermissionState.status.isGranted) {
-                                    uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
-                                    cameraLauncher.launch(uri)
+                                    takePicture.value = true
+                                    openDialog.value = true
                                 } else {
                                     cameraPermissionState.launchPermissionRequest()
                                 }
@@ -129,11 +136,49 @@ fun AddScreen(
                                     .padding(vertical = 8.dp),
                             )
                         }
+                        if (openDialog.value) {
+                            AlertDialog(
+                                onDismissRequest = {},
+                                title = {
+                                    Text(text = "Image")
+                                },
+                                text = {
+                                    TextField(
+                                        value = descriptionImage,
+                                        onValueChange = { descriptionImage = it },
+                                        label = { Text("picture's title") },
+                                    )
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            if (takePicture.value) {
+                                                uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
+                                                cameraLauncher.launch(uri)
+                                                takePicture.value = false
+                                            } else {
+                                                multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                            }
+                                            openDialog.value = false
+                                        },
+                                    ) {
+                                        Text("Confirm")
+                                    }
+                                },
+                                dismissButton = {
+                                    Button(
+                                        onClick = {
+                                            openDialog.value = false
+                                        },
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                },
+                            )
+                        }
                         Button(
                             onClick = {
-                                multiplePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
-                                )
+                                openDialog.value = true
                             },
                             modifier = Modifier
                                 .padding(bottom = 8.dp),
@@ -175,7 +220,7 @@ fun AddScreen(
                                         shape = CircleShape,
                                         onClick = {
                                             selectedImageUris.remove(uri)
-                                            onEvent(PropertyEvent.SetPicture(uri))
+                                            onEvent(PropertyEvent.SetUriPicture(uri))
                                         },
                                     ) {
                                         Icon(Icons.Filled.Clear, "Delete picture")

@@ -9,7 +9,8 @@ sealed interface PropertyEvent {
     data class SetSurface(val surface: Int) : PropertyEvent
     data class SetPieceNumber(val pieceNumber: Int) : PropertyEvent
     data class SetDescription(val description: String) : PropertyEvent
-    data class SetPicture(val picture: Uri) : PropertyEvent
+    data class SetUriPicture(val uriPicture: Uri) : PropertyEvent
+    data class SetTitlePicture(val titlePicture: String) : PropertyEvent
     data class SetAddress(val address: String) : PropertyEvent
     data class SetLocation(val location: String) : PropertyEvent
     data class SetNearInterestPoint(val nearInterestPoint: InterestPoint) : PropertyEvent
