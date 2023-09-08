@@ -90,7 +90,9 @@ fun AddScreen(
     val chip = remember { mutableStateListOf<InterestPoint>() }
     val selectedImageUris = remember { mutableStateListOf<Uri>() }
     val selectedImageTitles = remember { mutableStateListOf<String>() }
-    val openDialog = remember { mutableStateOf(false) }
+    val openDialogPicture = remember { mutableStateOf(false) }
+    val openDialogFolderPermission = remember { mutableStateOf(false) }
+    val openDialogCameraPermission = remember { mutableStateOf(false) }
     val takePicture = remember { mutableStateOf(false) }
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -105,6 +107,7 @@ fun AddScreen(
         },
     )
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+    val folderPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
         if (taken) {
             uri?.let { it1 -> selectedImageUris.add(it1) }
@@ -131,9 +134,12 @@ fun AddScreen(
                             onClick = {
                                 if (cameraPermissionState.status.isGranted) {
                                     takePicture.value = true
-                                    openDialog.value = true
+                                    openDialogPicture.value = true
                                 } else {
                                     cameraPermissionState.launchPermissionRequest()
+                                    if (!cameraPermissionState.status.isGranted) {
+                                        openDialogCameraPermission.value = true
+                                    }
                                 }
                             },
                         ) {
@@ -146,7 +152,14 @@ fun AddScreen(
                         }
                         Button(
                             onClick = {
-                                openDialog.value = true
+                                if (folderPermissionState.status.isGranted) {
+                                    openDialogPicture.value = true
+                                } else {
+                                    folderPermissionState.launchPermissionRequest()
+                                    if (!folderPermissionState.status.isGranted) {
+                                        openDialogFolderPermission.value = true
+                                    }
+                                }
                             },
                             modifier = Modifier
                                 .padding(bottom = 8.dp),
@@ -158,7 +171,47 @@ fun AddScreen(
                                     .padding(vertical = 8.dp),
                             )
                         }
-                        if (openDialog.value) {
+                        if (openDialogCameraPermission.value) {
+                            AlertDialog(
+                                onDismissRequest = {},
+                                title = {
+                                    Text("Permission denied")
+                                },
+                                text = {
+                                    Text("Please go to your settings to allow camera permission in order to be able to take a picture from your device.")
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            openDialogCameraPermission.value = false
+                                        },
+                                    ) {
+                                        Text("Got it")
+                                    }
+                                },
+                            )
+                        }
+                        if (openDialogFolderPermission.value) {
+                            AlertDialog(
+                                onDismissRequest = {},
+                                title = {
+                                    Text("Permission denied")
+                                },
+                                text = {
+                                    Text("Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.")
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            openDialogFolderPermission.value = false
+                                        },
+                                    ) {
+                                        Text("Got it")
+                                    }
+                                },
+                            )
+                        }
+                        if (openDialogPicture.value) {
                             AlertDialog(
                                 onDismissRequest = {},
                                 title = {
@@ -181,7 +234,7 @@ fun AddScreen(
                                             } else {
                                                 multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                                             }
-                                            openDialog.value = false
+                                            openDialogPicture.value = false
                                         },
                                     ) {
                                         Text("Confirm")
@@ -190,7 +243,7 @@ fun AddScreen(
                                 dismissButton = {
                                     Button(
                                         onClick = {
-                                            openDialog.value = false
+                                            openDialogPicture.value = false
                                         },
                                     ) {
                                         Text("Cancel")
