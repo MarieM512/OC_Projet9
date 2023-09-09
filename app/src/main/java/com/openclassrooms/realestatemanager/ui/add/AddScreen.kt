@@ -88,7 +88,7 @@ fun AddScreen(
     var typeExpanded by remember { mutableStateOf(false) }
     var agentExpanded by remember { mutableStateOf(false) }
     val chip = remember { mutableStateListOf<InterestPoint>() }
-    val selectedImageUris = remember { mutableStateListOf<Uri>() }
+    val selectedImageUris = remember { mutableStateListOf<String>() }
     val selectedImageTitles = remember { mutableStateListOf<String>() }
     val openDialogPicture = remember { mutableStateOf(false) }
     val openDialogFolderPermission = remember { mutableStateOf(false) }
@@ -98,21 +98,22 @@ fun AddScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             if (uri != null) {
-                selectedImageUris.add(ImageSave.saveImgInCache(context, uri))
+                selectedImageUris.add(uri.toString())
                 selectedImageTitles.add(descriptionImage)
-                onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri)))
+                onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri).toString()))
                 onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
                 descriptionImage = ""
             }
         },
     )
+
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val folderPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
         if (taken) {
-            uri?.let { it1 -> selectedImageUris.add(it1) }
+            uri.let { it1 -> selectedImageUris.add(it1.toString()) }
             selectedImageTitles.add(descriptionImage)
-            uri?.let { it1 -> PropertyEvent.SetUriPicture(it1) }?.let { it2 -> onEvent(it2) }
+            uri?.toString()?.let { PropertyEvent.SetUriPicture(it) }?.let { onEvent(it) }
             onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
         }
         descriptionImage = ""
@@ -282,7 +283,7 @@ fun AddScreen(
                                         onClick = {
                                             selectedImageUris.remove(image.first)
                                             selectedImageTitles.remove(image.second)
-                                            onEvent(PropertyEvent.SetUriPicture(image.first))
+                                            onEvent(PropertyEvent.SetUriPicture(image.first.toString()))
                                             onEvent(PropertyEvent.SetTitlePicture(image.second))
                                         },
                                     ) {

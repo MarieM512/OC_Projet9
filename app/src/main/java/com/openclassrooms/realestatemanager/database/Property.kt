@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.database
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,7 +12,7 @@ data class Property(
     val surface: Int,
     val pieceNumber: Int,
     val description: String,
-    val uriPicture: List<Uri>,
+    val uriPicture: List<String>,
     val titlePicture: List<String>,
     val address: String,
     val location: String,

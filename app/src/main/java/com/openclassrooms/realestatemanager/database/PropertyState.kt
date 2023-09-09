@@ -1,7 +1,5 @@
 package com.openclassrooms.realestatemanager.database
 
-import android.net.Uri
-
 data class PropertyState(
     val property: List<Property> = emptyList(),
     val type: PropertyType = PropertyType.HOUSE,
@@ -9,7 +7,7 @@ data class PropertyState(
     val surface: Int = 0,
     val pieceNumber: Int = 0,
     val description: String = "",
-    val uriPicture: MutableList<Uri> = mutableListOf(),
+    val uriPicture: MutableList<String> = mutableListOf(),
     val titlePicture: MutableList<String> = mutableListOf(),
     val address: String = "",
     val location: String = "",
