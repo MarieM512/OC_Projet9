@@ -102,7 +102,6 @@ fun AddScreen(
                 selectedImageTitles.add(descriptionImage)
                 onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri).toString()))
                 onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
-                descriptionImage = ""
             }
         },
     )
@@ -116,7 +115,6 @@ fun AddScreen(
             uri?.toString()?.let { PropertyEvent.SetUriPicture(it) }?.let { onEvent(it) }
             onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
         }
-        descriptionImage = ""
     }
 
     AppTheme {
@@ -213,6 +211,7 @@ fun AddScreen(
                             )
                         }
                         if (openDialogPicture.value) {
+                            descriptionImage = ""
                             AlertDialog(
                                 onDismissRequest = {},
                                 title = {
@@ -228,12 +227,14 @@ fun AddScreen(
                                 confirmButton = {
                                     Button(
                                         onClick = {
-                                            if (takePicture.value) {
-                                                uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
-                                                cameraLauncher.launch(uri)
-                                                takePicture.value = false
-                                            } else {
-                                                multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                            if (descriptionImage.isNotEmpty()) {
+                                                if (takePicture.value) {
+                                                    uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
+                                                    cameraLauncher.launch(uri)
+                                                    takePicture.value = false
+                                                } else {
+                                                    multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                }
                                             }
                                             openDialogPicture.value = false
                                         },

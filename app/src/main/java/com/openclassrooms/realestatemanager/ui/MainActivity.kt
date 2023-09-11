@@ -7,6 +7,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,10 +17,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.utils.Converters
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomBar
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.NavigationGraph
+import com.openclassrooms.realestatemanager.utils.Converters
 
 class MainActivity : ComponentActivity() {
 
@@ -42,11 +44,14 @@ class MainActivity : ComponentActivity() {
         },
     )
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
+            val windowSizeClass = calculateWindowSizeClass(activity = this)
+//            deleteDatabase("properties.db")
 //            PropertyScreen(state = state, onEvent = viewModel::onEvent)
             Scaffold(
                 bottomBar = {
@@ -56,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier.padding(padding),
                 ) {
-                    NavigationGraph(navController = navController, state = state, onEvent = viewModel::onEvent)
+                    NavigationGraph(navController = navController, state = state, onEvent = viewModel::onEvent, windowSizeClass = windowSizeClass)
                 }
             }
         }
