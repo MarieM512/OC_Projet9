@@ -35,18 +35,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
+import com.openclassrooms.realestatemanager.ui.detail.DetailScreen
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
     state: PropertyState,
     onEvent: (PropertyEvent) -> Unit,
+    navController: NavController,
 ) {
     val context = LocalContext.current
 
@@ -77,7 +80,7 @@ fun ListScreen(
                     elevation = CardDefaults.elevatedCardElevation(),
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
-                        println("hey")
+                        navController.navigate("property/${property}")
                     },
                 ) {
                     Column(

@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/add_photo_alternate/baseline_add_photo_alternate_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/location_on/baseline_location_on_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_image" />
+                            <entry key="outputName" value="ic_address" />
                           </map>
                         </option>
                       </PersistentState>

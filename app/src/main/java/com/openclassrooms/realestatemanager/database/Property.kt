@@ -1,7 +1,9 @@
 package com.openclassrooms.realestatemanager.database
 
+import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.Gson
 
 @Entity
 data class Property(
@@ -21,4 +23,6 @@ data class Property(
     val entryDate: String,
     val soldDate: String,
     val agent: Agent,
-)
+) {
+    override fun toString(): String = Uri.encode(Gson().toJson(this))
+}
