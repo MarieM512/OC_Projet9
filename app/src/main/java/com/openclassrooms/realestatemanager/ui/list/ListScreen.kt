@@ -1,50 +1,35 @@
 package com.openclassrooms.realestatemanager.ui.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import com.openclassrooms.realestatemanager.ui.detail.DetailScreen
+import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
     state: PropertyState,
@@ -71,66 +56,20 @@ fun ListScreen(
                 }
             }
             items(state.property) { property ->
-                val pagerState = rememberPagerState(pageCount = {
-                    property.uriPicture.size
-                })
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(),
                     elevation = CardDefaults.elevatedCardElevation(),
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
-                        navController.navigate("property/${property}")
+                        navController.navigate("property/$property")
                     },
                 ) {
                     Column(
                         modifier = Modifier
                             .padding(18.dp),
                     ) {
-                        Box(
-                            contentAlignment = Alignment.BottomCenter,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp)),
-                        ) {
-                            HorizontalPager(state = pagerState) { page ->
-                                Box() {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(context)
-                                            .data(property.uriPicture[page].toUri()).crossfade(true).build(),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .fillParentMaxWidth(),
-                                        contentScale = ContentScale.Crop,
-                                    )
-                                    Text(
-                                        text = property.titlePicture[page],
-                                        modifier = Modifier
-                                            .background(MaterialTheme.colorScheme.outline)
-                                            .fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        color = MaterialTheme.colorScheme.surfaceTint,
-                                        fontSize = 20.sp,
-                                    )
-                                }
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                            ) {
-                                repeat(property.uriPicture.size) { iteration ->
-                                    val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .clip(CircleShape)
-                                            .background(color)
-                                            .size(10.dp),
-                                    )
-                                }
-                            }
-                        }
+                        Carousel(context, property)
                         Column(
                             modifier = Modifier
                                 .padding(vertical = 8.dp)

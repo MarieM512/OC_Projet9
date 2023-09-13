@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.composant.bottomNavigation
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -70,7 +71,7 @@ fun NavigationGraph(
         ) { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                DetailScreen(property = property)
+                DetailScreen(property = property, navController = navController)
             }
         }
     }
