@@ -127,6 +127,8 @@ fun DetailScreen(
                                         onClick = {},
                                         label = { Text(interest.label) },
                                         selected = true,
+                                        modifier = Modifier
+                                            .padding(horizontal = 4.dp),
                                     )
                                 }
                             }

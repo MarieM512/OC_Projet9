@@ -4,18 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,31 +40,19 @@ fun ListScreen(
     val context = LocalContext.current
 
     AppTheme() {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxSize(),
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 300.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(all = 16.dp),
         ) {
-            item {
-                Button(
-                    onClick = {
-                        onEvent(PropertyEvent.DeleteAllProperty)
-                    },
-
-                ) {
-                    Text("text")
-                }
-            }
             items(state.property) { property ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(),
                     elevation = CardDefaults.elevatedCardElevation(),
                     shape = RoundedCornerShape(16.dp),
-                    onClick = {
-                        navController.navigate("property/$property")
-                    },
+                    onClick = { navController.navigate("property/$property") },
                 ) {
                     Column(
                         modifier = Modifier
@@ -82,20 +71,8 @@ fun ListScreen(
                                     modifier = Modifier
                                         .weight(1f),
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                    ) {
-                                        Text(text = "Surface: ${property.surface}")
-                                        Text(text = "Piece: ${property.pieceNumber}")
-                                    }
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                    ) {
-                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
-                                        Text(text = property.address)
-                                    }
+                                    Text(text = "Surface: ${property.surface}")
+                                    Text(text = "Piece: ${property.pieceNumber}")
                                 }
                                 Column(
                                     modifier = Modifier
@@ -103,6 +80,12 @@ fun ListScreen(
                                     horizontalAlignment = Alignment.End,
                                 ) {
                                     Text(text = "${property.price} $")
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    ) {
+                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                        Text(text = property.address)
+                                    }
                                 }
                             }
                         }

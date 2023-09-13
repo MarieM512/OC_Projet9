@@ -284,7 +284,7 @@ fun AddScreen(
                                         onClick = {
                                             selectedImageUris.remove(image.first)
                                             selectedImageTitles.remove(image.second)
-                                            onEvent(PropertyEvent.SetUriPicture(image.first.toString()))
+                                            onEvent(PropertyEvent.SetUriPicture(image.first))
                                             onEvent(PropertyEvent.SetTitlePicture(image.second))
                                         },
                                     ) {
