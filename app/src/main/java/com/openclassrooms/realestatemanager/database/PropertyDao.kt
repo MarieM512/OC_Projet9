@@ -13,4 +13,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property ORDER BY entryDate ASC")
     fun getPropertiesOrderedByEntryDate(): Flow<List<Property>>
+
+    @Query("DELETE FROM property")
+    fun nukeTable()
 }
