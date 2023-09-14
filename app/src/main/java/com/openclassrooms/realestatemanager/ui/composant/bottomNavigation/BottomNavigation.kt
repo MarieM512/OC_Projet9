@@ -47,7 +47,7 @@ fun NavigationGraph(
             ListScreen(state, onEvent, navController)
         }
         composable(BottomNavItem.Add.route) {
-            AddScreen(state = state, onEvent = onEvent)
+            AddScreen(state = state, onEvent = onEvent, navController = navController)
         }
         composable(BottomNavItem.Filter.route) {
             FilterView()
@@ -72,6 +72,19 @@ fun NavigationGraph(
                         DetailTabletScreen(property = property, navController = navController)
                     }
                 }
+            }
+        }
+        composable(
+            "edit/{propertyId}",
+            arguments = listOf(
+                navArgument("propertyId") {
+                    type = PropertyArgType()
+                },
+            ),
+        ) { navBackStackEntry ->
+            val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
+            if (property != null) {
+                AddScreen(state = state, onEvent = onEvent, property = property, navController = navController)
             }
         }
     }
