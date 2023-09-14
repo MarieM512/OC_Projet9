@@ -69,8 +69,8 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 )
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
                 ) {
                     TextField(
                         value = loanUiState.contribution,
@@ -88,7 +88,9 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                             .weight(1f),
                     ) {
                         TextField(
-                            modifier = Modifier.menuAnchor(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
                             readOnly = true,
                             value = loanUiState.selectedOptionText,
                             onValueChange = {},

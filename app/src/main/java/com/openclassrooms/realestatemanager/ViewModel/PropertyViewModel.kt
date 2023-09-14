@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ViewModel
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
 import com.openclassrooms.realestatemanager.database.Status
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -47,13 +49,21 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
+            //
+            PropertyEvent.DeleteAllProperty -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    dao.nukeTable()
+                }
+            }
+
             PropertyEvent.SaveProperty -> {
                 val type = _state.value.type
                 val price = _state.value.price
                 val surface = _state.value.surface
                 val pieceNumber = _state.value.pieceNumber
                 val description = _state.value.description
-                val picture = _state.value.picture
+                val uriPicture = _state.value.uriPicture
+                val titlePicture = _state.value.titlePicture
                 val address = _state.value.address
                 val location = _state.value.location
                 val nearInterestPoint = _state.value.nearInterestPoint
@@ -73,7 +83,8 @@ class PropertyViewModel(
                     surface = surface,
                     pieceNumber = pieceNumber,
                     description = description,
-                    picture = picture,
+                    uriPicture = uriPicture,
+                    titlePicture = titlePicture,
                     address = address,
                     location = location,
                     nearInterestPoint = nearInterestPoint,
@@ -93,7 +104,8 @@ class PropertyViewModel(
                         surface = 0,
                         pieceNumber = 0,
                         description = "",
-                        picture = mutableListOf(),
+                        uriPicture = mutableListOf(),
+                        titlePicture = mutableListOf(),
                         address = "",
                         location = "",
                         nearInterestPoint = mutableListOf(),
@@ -149,15 +161,27 @@ class PropertyViewModel(
                 }
             }
 
-            is PropertyEvent.SetPicture -> {
+            is PropertyEvent.SetUriPicture -> {
                 _state.update {
-                    val image: MutableList<Uri> = it.picture
-                    if (image.contains(event.picture)) {
-                        image.remove(event.picture)
+                    val image: MutableList<String> = it.uriPicture
+                    if (image.contains(event.uriPicture)) {
+                        image.remove(event.uriPicture)
                     } else {
-                        image.add(event.picture)
+                        image.add(event.uriPicture)
                     }
-                    it.copy(picture = image)
+                    it.copy(uriPicture = image)
+                }
+            }
+
+            is PropertyEvent.SetTitlePicture -> {
+                _state.update {
+                    val title: MutableList<String> = it.titlePicture
+                    if (title.contains(event.titlePicture)) {
+                        title.remove(event.titlePicture)
+                    } else {
+                        title.add(event.titlePicture)
+                    }
+                    it.copy(titlePicture = title)
                 }
             }
 

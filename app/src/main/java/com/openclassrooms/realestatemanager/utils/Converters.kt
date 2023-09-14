@@ -1,28 +1,23 @@
 package com.openclassrooms.realestatemanager.utils
 
-import android.net.Uri
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.openclassrooms.realestatemanager.database.InterestPoint
 
 @ProvidedTypeConverter
 class Converters {
-
     @TypeConverter
-    fun fromUriList(value: List<Uri>): String {
-        val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter).create()
-        val listType = object : TypeToken<List<Uri>>() {}.type
-        return gson.toJson(value, listType)
+    fun fromStringList(value: List<String>): String {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().toJson(value, listType)
     }
 
     @TypeConverter
-    fun toUriList(value: String): List<Uri> {
-        val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter).create()
-        val listType = object : TypeToken<List<Uri>>() {}.type
-        return gson.fromJson(value, listType)
+    fun toStringList(value: String): List<String> {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
