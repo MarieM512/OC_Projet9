@@ -69,6 +69,8 @@ fun DetailScreen(
                             )
                         }
                         Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text("Entry: ${property.entryDate}")

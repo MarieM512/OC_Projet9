@@ -41,6 +41,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +76,7 @@ import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
+import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarEdit
 import com.openclassrooms.realestatemanager.utils.ImageSave
 import java.text.SimpleDateFormat
@@ -128,14 +130,18 @@ fun AddScreen(
         }
     }
 
-    if (property != null && state.address.isEmpty()){
+    if (property != null && state.address.isEmpty()) {
+        property.uriPicture.let { selectedImageUris.addAll(it) }
+        property.titlePicture.let { selectedImageTitles.addAll(it) }
+        property.nearInterestPoint.forEach { interestPoint ->
+            onEvent(PropertyEvent.SetNearInterestPoint(interestPoint))
+        }
+        property.nearInterestPoint.let { chip.addAll(it) }
         property.uriPicture.zip(property.titlePicture).forEach { picture ->
             onEvent(PropertyEvent.SetUriPicture(picture.first))
             onEvent(PropertyEvent.SetTitlePicture(picture.second))
         }
-        property.nearInterestPoint.forEach { interestPoint ->
-            onEvent(PropertyEvent.SetNearInterestPoint(interestPoint))
-        }
+
         onEvent(PropertyEvent.SetType(property.type))
         onEvent(PropertyEvent.SetPrice(property.price))
         onEvent(PropertyEvent.SetSurface(property.surface))
@@ -143,17 +149,13 @@ fun AddScreen(
         onEvent(PropertyEvent.SetAgent(property.agent))
         onEvent(PropertyEvent.SetAddress(property.address))
         onEvent(PropertyEvent.SetDescription(property.description))
-
-        property.uriPicture.let { selectedImageUris.addAll(it) }
-        property.titlePicture.let { selectedImageTitles.addAll(it) }
-        property.nearInterestPoint.let { chip.addAll(it) }
     }
 
     AppTheme {
         Scaffold(
             topBar = {
                 if (property != null) {
-                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id)
+                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id, clear = {onEvent(PropertyEvent.SetAddress(""))})
                 }
             },
             content = { innerPadding ->
@@ -529,6 +531,8 @@ fun AddScreen(
                                                 ),
                                             ),
                                         )
+                                        onEvent(PropertyEvent.SaveProperty(property.id))
+                                        navController.navigate(BottomNavItem.List.route)
                                     } else {
                                         onEvent(PropertyEvent.SaveProperty(-1))
                                     }

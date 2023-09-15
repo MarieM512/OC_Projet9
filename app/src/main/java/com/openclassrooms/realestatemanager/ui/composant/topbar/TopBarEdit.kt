@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.database.PropertyEvent
+import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,6 +23,7 @@ fun TopBarEdit(
     onEvent: (PropertyEvent) -> Unit,
     navController: NavController,
     id: Int,
+    clear: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -32,7 +34,10 @@ fun TopBarEdit(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
+            IconButton(onClick = {
+                navController.navigateUp()
+                clear()
+            }) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Cancel",
@@ -42,7 +47,7 @@ fun TopBarEdit(
         actions = {
             IconButton(onClick = {
                 onEvent(PropertyEvent.SaveProperty(id))
-                navController.navigateUp()
+                navController.navigate(BottomNavItem.List.route)
             }) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
