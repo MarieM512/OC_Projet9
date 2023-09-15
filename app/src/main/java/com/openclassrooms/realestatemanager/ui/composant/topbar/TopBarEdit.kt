@@ -21,6 +21,7 @@ import com.openclassrooms.realestatemanager.database.PropertyEvent
 fun TopBarEdit(
     onEvent: (PropertyEvent) -> Unit,
     navController: NavController,
+    id: Int,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -40,7 +41,7 @@ fun TopBarEdit(
         },
         actions = {
             IconButton(onClick = {
-                onEvent(PropertyEvent.SaveProperty)
+                onEvent(PropertyEvent.SaveProperty(id))
                 navController.navigateUp()
             }) {
                 Icon(

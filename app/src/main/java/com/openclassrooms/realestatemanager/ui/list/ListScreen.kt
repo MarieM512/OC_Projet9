@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
@@ -37,7 +37,7 @@ import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 @Composable
 fun ListScreen(
     state: PropertyState,
-    onEvent: (PropertyEvent) -> Unit,
+    viewModel: PropertyViewModel,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
 ): Property? {

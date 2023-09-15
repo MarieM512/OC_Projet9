@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier.padding(padding),
                 ) {
-                    NavigationGraph(navController = navController, state = state, onEvent = viewModel::onEvent, windowSizeClass = windowSizeClass)
+                    NavigationGraph(navController = navController, state = state, viewModel = viewModel, windowSizeClass = windowSizeClass)
                 }
             }
         }

@@ -16,12 +16,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
 import com.openclassrooms.realestatemanager.database.Property
@@ -45,7 +47,7 @@ import java.util.Date
 fun NavigationGraph(
     navController: NavHostController,
     state: PropertyState,
-    onEvent: (PropertyEvent) -> Unit,
+    viewModel: PropertyViewModel,
     windowSizeClass: WindowSizeClass,
 ) {
     NavHost(navController, startDestination = BottomNavItem.Map.route) {
@@ -55,14 +57,14 @@ fun NavigationGraph(
         composable(BottomNavItem.List.route) {
             when (windowSizeClass.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-                    ListScreen(state, onEvent, navController, windowSizeClass)
+                    ListScreen(state, viewModel, navController, windowSizeClass)
                 } else -> {
-                    ListTabletScreen(state, onEvent, navController, windowSizeClass)
+                    ListTabletScreen(state, viewModel, navController, windowSizeClass)
                 }
             }
         }
         composable(BottomNavItem.Add.route) {
-            AddScreen(state = state, onEvent = onEvent, navController = navController)
+            AddScreen(state = state, onEvent = viewModel::onEvent, navController = navController)
         }
         composable(BottomNavItem.Filter.route) {
             FilterView()
@@ -79,7 +81,7 @@ fun NavigationGraph(
         composable("edit/{propertyId}") { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                AddScreen(state = state, onEvent = onEvent, property = property, navController = navController)
+                AddScreen(state = state, onEvent = viewModel::onEvent, property = property, navController = navController)
             }
         }
     }

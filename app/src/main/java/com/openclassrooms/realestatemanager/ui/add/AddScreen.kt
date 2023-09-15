@@ -128,7 +128,22 @@ fun AddScreen(
         }
     }
 
-    if (property != null && selectedImageUris.isEmpty() && selectedImageTitles.isEmpty()) {
+    if (property != null && state.address.isEmpty()){
+        property.uriPicture.zip(property.titlePicture).forEach { picture ->
+            onEvent(PropertyEvent.SetUriPicture(picture.first))
+            onEvent(PropertyEvent.SetTitlePicture(picture.second))
+        }
+        property.nearInterestPoint.forEach { interestPoint ->
+            onEvent(PropertyEvent.SetNearInterestPoint(interestPoint))
+        }
+        onEvent(PropertyEvent.SetType(property.type))
+        onEvent(PropertyEvent.SetPrice(property.price))
+        onEvent(PropertyEvent.SetSurface(property.surface))
+        onEvent(PropertyEvent.SetPieceNumber(property.pieceNumber))
+        onEvent(PropertyEvent.SetAgent(property.agent))
+        onEvent(PropertyEvent.SetAddress(property.address))
+        onEvent(PropertyEvent.SetDescription(property.description))
+
         property.uriPicture.let { selectedImageUris.addAll(it) }
         property.titlePicture.let { selectedImageTitles.addAll(it) }
         property.nearInterestPoint.let { chip.addAll(it) }
@@ -138,7 +153,7 @@ fun AddScreen(
         Scaffold(
             topBar = {
                 if (property != null) {
-                    TopBarEdit(onEvent = onEvent, navController = navController)
+                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id)
                 }
             },
             content = { innerPadding ->
@@ -377,7 +392,7 @@ fun AddScreen(
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     readOnly = true,
-                                    value = property?.type?.label ?: state.type.label,
+                                    value = state.type.label,
                                     onValueChange = {},
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -400,7 +415,7 @@ fun AddScreen(
                                 }
                             }
                             TextField(
-                                value = property?.price?.toString() ?: state.price.toString(),
+                                value = state.price.toString(),
                                 onValueChange = {
                                     onEvent(PropertyEvent.SetPrice(it.toInt()))
                                 },
@@ -417,7 +432,7 @@ fun AddScreen(
                                 .fillMaxWidth(),
                         ) {
                             TextField(
-                                value = property?.surface?.toString() ?: state.surface.toString(),
+                                value = state.surface.toString(),
                                 onValueChange = {
                                     onEvent(PropertyEvent.SetSurface(it.toInt()))
                                 },
@@ -427,7 +442,7 @@ fun AddScreen(
                                 modifier = Modifier.weight(1f),
                             )
                             TextField(
-                                value = property?.pieceNumber?.toString() ?: state.pieceNumber.toString(),
+                                value = state.pieceNumber.toString(),
                                 onValueChange = {
                                     onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
                                 },
@@ -449,7 +464,7 @@ fun AddScreen(
                                     .fillMaxWidth()
                                     .menuAnchor(),
                                 readOnly = true,
-                                value = property?.agent?.label ?: state.agent.label,
+                                value = state.agent.label,
                                 onValueChange = {},
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = agentExpanded) },
                                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -472,7 +487,7 @@ fun AddScreen(
                             }
                         }
                         TextField(
-                            value = property?.address ?: state.address,
+                            value = state.address,
                             onValueChange = {
                                 onEvent(PropertyEvent.SetAddress(it))
                             },
@@ -483,7 +498,7 @@ fun AddScreen(
                                 .fillMaxWidth(),
                         )
                         TextField(
-                            value = property?.description ?: state.description,
+                            value = state.description,
                             onValueChange = {
                                 onEvent(PropertyEvent.SetDescription(it))
                             },
@@ -507,12 +522,15 @@ fun AddScreen(
                                     chip.clear()
                                     if (property != null) {
                                         onEvent(PropertyEvent.SetStatus(Status.SOLD))
-                                        onEvent(PropertyEvent.SetSoldDate(
-                                            SimpleDateFormat("dd/MM/yyyy").format(
-                                                Date()
-                                            )))
+                                        onEvent(
+                                            PropertyEvent.SetSoldDate(
+                                                SimpleDateFormat("dd/MM/yyyy").format(
+                                                    Date(),
+                                                ),
+                                            ),
+                                        )
                                     } else {
-                                        onEvent(PropertyEvent.SaveProperty)
+                                        onEvent(PropertyEvent.SaveProperty(-1))
                                     }
                                 },
                                 modifier = Modifier

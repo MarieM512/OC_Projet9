@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.ViewModel
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.Agent
@@ -56,7 +54,8 @@ class PropertyViewModel(
                 }
             }
 
-            PropertyEvent.SaveProperty -> {
+            is PropertyEvent.SaveProperty -> {
+                val id = event.id
                 val type = _state.value.type
                 val price = _state.value.price
                 val surface = _state.value.surface
@@ -77,22 +76,44 @@ class PropertyViewModel(
                     return
                 }
 
-                val property = Property(
-                    type = type,
-                    price = price,
-                    surface = surface,
-                    pieceNumber = pieceNumber,
-                    description = description,
-                    uriPicture = uriPicture,
-                    titlePicture = titlePicture,
-                    address = address,
-                    location = location,
-                    nearInterestPoint = nearInterestPoint,
-                    status = status,
-                    entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
-                    soldDate = soldDate,
-                    agent = agent,
-                )
+                val property: Property
+
+                if (id != -1) {
+                    property = Property(
+                        id = id,
+                        type = type,
+                        price = price,
+                        surface = surface,
+                        pieceNumber = pieceNumber,
+                        description = description,
+                        uriPicture = uriPicture,
+                        titlePicture = titlePicture,
+                        address = address,
+                        location = location,
+                        nearInterestPoint = nearInterestPoint,
+                        status = status,
+                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        soldDate = soldDate,
+                        agent = agent,
+                    )
+                } else {
+                    property = Property(
+                        type = type,
+                        price = price,
+                        surface = surface,
+                        pieceNumber = pieceNumber,
+                        description = description,
+                        uriPicture = uriPicture,
+                        titlePicture = titlePicture,
+                        address = address,
+                        location = location,
+                        nearInterestPoint = nearInterestPoint,
+                        status = status,
+                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        soldDate = soldDate,
+                        agent = agent,
+                    )
+                }
                 viewModelScope.launch {
                     dao.upsertProperty(property)
                 }
