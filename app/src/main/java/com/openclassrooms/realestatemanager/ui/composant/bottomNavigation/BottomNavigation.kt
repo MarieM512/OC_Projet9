@@ -42,7 +42,13 @@ fun NavigationGraph(
             MapView()
         }
         composable(BottomNavItem.List.route) {
-            ListScreen(state, onEvent, navController)
+            when (windowSizeClass.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> {
+                    ListScreen(state, onEvent, navController)
+                } else -> {
+                    MapView()
+                }
+            }
         }
         composable(BottomNavItem.Add.route) {
             AddScreen(state = state, onEvent = onEvent, navController = navController)
