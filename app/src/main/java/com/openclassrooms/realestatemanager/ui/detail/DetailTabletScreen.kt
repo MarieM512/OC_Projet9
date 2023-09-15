@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +15,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,6 @@ import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
-import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,101 +41,93 @@ fun DetailTabletScreen(
     val context = LocalContext.current
 
     AppTheme() {
-        Scaffold(
-            topBar = {
-                TopBarDetail(property, navController)
-            },
-            content = { innerPadding ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentPadding = innerPadding,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    item {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                    ) {
+                        Carousel(context, property)
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(2f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .weight(1f),
-                            ) {
-                                Carousel(context, property)
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .weight(2f),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(
-                                        text = property.status.label,
-                                        color = if (property.status == Status.AVAILABLE) {
-                                            Color.Green
-                                        } else {
-                                            MaterialTheme.colorScheme.error
-                                        },
-                                    )
-                                }
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    Text("Entry: ${property.entryDate}")
-                                    if (property.soldDate.isNotEmpty()) {
-                                        Text("Sold: ${property.soldDate}")
-                                    }
-                                }
-                                LazyRow() {
-                                    item {
-                                        property.nearInterestPoint.forEach { interest ->
-                                            FilterChip(
-                                                onClick = {},
-                                                label = { Text(interest.label) },
-                                                selected = true,
-                                                modifier = Modifier
-                                                    .padding(horizontal = 4.dp),
-                                            )
-                                        }
-                                    }
-                                }
-                                Divider()
-                                Row() {
-                                    Column(
-                                        modifier = Modifier
-                                            .weight(1f),
-                                    ) {
-                                        Text(property.type.label)
-                                        Text(property.agent.label)
-                                        Text("Surface: ${property.surface}")
-                                        Text("Piece: ${property.pieceNumber}")
-                                    }
-                                    Column(
-                                        modifier = Modifier
-                                            .weight(1f),
-                                        horizontalAlignment = Alignment.End,
-                                    ) {
-                                        Row() {
-                                            Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
-                                            Text(property.address)
-                                        }
-                                    }
-                                }
-                                Divider()
-                                Text(
-                                    text = property.description,
-                                    textAlign = TextAlign.Justify,
-                                )
+                            Text(
+                                text = property.status.label,
+                                color = if (property.status == Status.AVAILABLE) {
+                                    Color.Green
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                },
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text("Entry: ${property.entryDate}")
+                            if (property.soldDate.isNotEmpty()) {
+                                Text("Sold: ${property.soldDate}")
                             }
                         }
+                        LazyRow() {
+                            item {
+                                property.nearInterestPoint.forEach { interest ->
+                                    FilterChip(
+                                        onClick = {},
+                                        label = { Text(interest.label) },
+                                        selected = true,
+                                        modifier = Modifier
+                                            .padding(horizontal = 4.dp),
+                                    )
+                                }
+                            }
+                        }
+                        Divider()
+                        Row() {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f),
+                            ) {
+                                Text(property.type.label)
+                                Text(property.agent.label)
+                                Text("Surface: ${property.surface}")
+                                Text("Piece: ${property.pieceNumber}")
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f),
+                                horizontalAlignment = Alignment.End,
+                            ) {
+                                Row() {
+                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                    Text(property.address)
+                                }
+                            }
+                        }
+                        Divider()
+                        Text(
+                            text = property.description,
+                            textAlign = TextAlign.Justify,
+                        )
                     }
                 }
-            },
-        )
+            }
+        }
     }
 }
