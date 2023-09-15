@@ -62,13 +62,7 @@ fun NavigationGraph(
         composable("property/{propertyId}") { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                when (windowSizeClass.widthSizeClass) {
-                    WindowWidthSizeClass.Compact -> {
-                        DetailScreen(property = property, navController = navController)
-                    } else -> {
-                        DetailTabletScreen(property = property, navController = navController)
-                    }
-                }
+                DetailScreen(property = property, navController = navController)
             }
         }
         composable("edit/{propertyId}") { navBackStackEntry ->
