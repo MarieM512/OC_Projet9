@@ -38,7 +38,7 @@ object Permissions {
         context: Context,
         permissions: Array<String>,
         launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
-        openMap: MutableState<Boolean>,
+        openDialog: MutableState<Boolean>,
     ) {
         if (
             permissions.all {
@@ -48,7 +48,27 @@ object Permissions {
                 ) == PackageManager.PERMISSION_GRANTED
             }
         ) {
-            openMap.value = true
+            openDialog.value = true
+        } else {
+            launcher.launch(permissions)
+        }
+    }
+
+    fun checkAndRequestPermission(
+        context: Context,
+        permissions: String,
+        launcher: ManagedActivityResultLauncher<String, Boolean>,
+        openDialog: MutableState<Boolean>,
+        openCamera: MutableState<Boolean>? = null,
+    ) {
+        if (
+            ContextCompat.checkSelfPermission(
+                context,
+                permissions,
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            openDialog.value = true
+            openCamera?.value = true
         } else {
             launcher.launch(permissions)
         }

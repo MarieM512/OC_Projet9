@@ -41,7 +41,6 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +63,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
@@ -79,6 +77,7 @@ import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarEdit
 import com.openclassrooms.realestatemanager.utils.ImageSave
+import com.openclassrooms.realestatemanager.utils.Permissions
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Objects
@@ -119,8 +118,30 @@ fun AddScreen(
         },
     )
 
-    val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-    val folderPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    val cameraPermission = android.Manifest.permission.CAMERA
+    val folderPermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        if (isGranted) {
+            takePicture.value = true
+            openDialogPicture.value = true
+        } else {
+            openDialogCameraPermission.value = true
+        }
+    }
+
+    val folderPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        if (isGranted) {
+            openDialogPicture.value = true
+        } else {
+            openDialogFolderPermission.value = true
+        }
+    }
+
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
         if (taken) {
             uri.let { it1 -> selectedImageUris.add(it1.toString()) }
@@ -155,7 +176,7 @@ fun AddScreen(
         Scaffold(
             topBar = {
                 if (property != null) {
-                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id, clear = {onEvent(PropertyEvent.SetAddress(""))})
+                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id, clear = { onEvent(PropertyEvent.SetAddress("")) })
                 }
             },
             content = { innerPadding ->
@@ -173,15 +194,7 @@ fun AddScreen(
                             ) {
                                 Button(
                                     onClick = {
-                                        if (cameraPermissionState.status.isGranted) {
-                                            takePicture.value = true
-                                            openDialogPicture.value = true
-                                        } else {
-                                            cameraPermissionState.launchPermissionRequest()
-                                            if (!cameraPermissionState.status.isGranted) {
-                                                openDialogCameraPermission.value = true
-                                            }
-                                        }
+                                        Permissions.checkAndRequestPermission(context, cameraPermission, cameraPermissionLauncher, openDialogPicture, takePicture)
                                     },
                                 ) {
                                     Icon(
@@ -193,14 +206,7 @@ fun AddScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        if (folderPermissionState.status.isGranted) {
-                                            openDialogPicture.value = true
-                                        } else {
-                                            folderPermissionState.launchPermissionRequest()
-                                            if (!folderPermissionState.status.isGranted) {
-                                                openDialogFolderPermission.value = true
-                                            }
-                                        }
+                                        Permissions.checkAndRequestPermission(context, folderPermission, folderPermissionLauncher, openDialogPicture)
                                     },
                                     modifier = Modifier
                                         .padding(bottom = 8.dp),
@@ -213,44 +219,10 @@ fun AddScreen(
                                     )
                                 }
                                 if (openDialogCameraPermission.value) {
-                                    AlertDialog(
-                                        onDismissRequest = {},
-                                        title = {
-                                            Text("Permission denied")
-                                        },
-                                        text = {
-                                            Text("Please go to your settings to allow camera permission in order to be able to take a picture from your device.")
-                                        },
-                                        confirmButton = {
-                                            Button(
-                                                onClick = {
-                                                    openDialogCameraPermission.value = false
-                                                },
-                                            ) {
-                                                Text("Got it")
-                                            }
-                                        },
-                                    )
+                                    Permissions.dialogPermission("Permission denied", "Please go to your settings to allow camera permission in order to be able to take a picture from your device.", openDialogCameraPermission)
                                 }
                                 if (openDialogFolderPermission.value) {
-                                    AlertDialog(
-                                        onDismissRequest = {},
-                                        title = {
-                                            Text("Permission denied")
-                                        },
-                                        text = {
-                                            Text("Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.")
-                                        },
-                                        confirmButton = {
-                                            Button(
-                                                onClick = {
-                                                    openDialogFolderPermission.value = false
-                                                },
-                                            ) {
-                                                Text("Got it")
-                                            }
-                                        },
-                                    )
+                                    Permissions.dialogPermission("Permission denied", "Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.", openDialogFolderPermission)
                                 }
                                 if (openDialogPicture.value) {
                                     descriptionImage = ""

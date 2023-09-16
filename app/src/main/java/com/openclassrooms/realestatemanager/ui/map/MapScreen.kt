@@ -64,7 +64,7 @@ fun MapScreen() {
             }
         }
         if (openDialogLocation.value) {
-            Permissions.dialogPermission("Permission denied", "Please go to your settings to allow location permission in order to be able to use the map.", openDialogLocation)
+            Permissions.dialogPermission("Permission denied", "Please go to your settings to allow location permission in order to be able to use the map.", openMap)
         }
     }
 }
