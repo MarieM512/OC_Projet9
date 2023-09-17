@@ -7,24 +7,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.utils.Permissions
 
 @SuppressLint("PermissionLaunchedDuringComposition")
 @Composable
-fun MapScreen() {
+fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
     val context = LocalContext.current
-
+    val mapUiState by mapViewModel.uiState.collectAsState()
     val openDialogLocation = remember { mutableStateOf(false) }
     val openMap = remember { mutableStateOf(false) }
     val multiplePermissionsState = arrayOf(
@@ -44,10 +47,12 @@ fun MapScreen() {
     }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(44.81, 20.461), 17f)
+        position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 15f)
     }
+    val mapProperties by remember { mutableStateOf(MapProperties(isMyLocationEnabled = true)) }
 
     LaunchedEffect(Unit) {
+        mapViewModel.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         Permissions.checkAndRequestLocationPermissions(context, multiplePermissionsState, launcher, openMap)
     }
 
@@ -56,11 +61,9 @@ fun MapScreen() {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
+                properties = mapProperties,
             ) {
-                Marker(
-                    state = MarkerState(position = LatLng(44.81, 20.461)),
-                    title = "Signapour",
-                )
+                mapViewModel.getCurrentLocation(cameraPositionState)
             }
         }
         if (openDialogLocation.value) {
