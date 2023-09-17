@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager.database
 
 sealed interface PropertyEvent {
-    object SaveProperty : PropertyEvent
+    data class SaveProperty(val id: Int) : PropertyEvent
 
     // TO DELETE
     object DeleteAllProperty : PropertyEvent
@@ -13,7 +13,8 @@ sealed interface PropertyEvent {
     data class SetUriPicture(val uriPicture: String) : PropertyEvent
     data class SetTitlePicture(val titlePicture: String) : PropertyEvent
     data class SetAddress(val address: String) : PropertyEvent
-    data class SetLocation(val location: String) : PropertyEvent
+    data class SetLatitude(val latitude: Double) : PropertyEvent
+    data class SetLongitude(val longitude: Double) : PropertyEvent
     data class SetNearInterestPoint(val nearInterestPoint: InterestPoint) : PropertyEvent
     data class SetStatus(val status: Status) : PropertyEvent
     data class SetSoldDate(val soldDate: String) : PropertyEvent
