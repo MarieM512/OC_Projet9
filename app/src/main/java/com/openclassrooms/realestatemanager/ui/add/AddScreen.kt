@@ -59,11 +59,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
@@ -85,7 +83,6 @@ import java.util.Objects
 @SuppressLint("SimpleDateFormat")
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalPermissionsApi::class,
 )
 @Composable
 fun AddScreen(
@@ -93,6 +90,7 @@ fun AddScreen(
     onEvent: (PropertyEvent) -> Unit,
     property: Property? = null,
     navController: NavController,
+    addViewModel: AddViewModel = viewModel()
 ) {
     val context = LocalContext.current
     var uri: Uri? = null
@@ -463,6 +461,10 @@ fun AddScreen(
                         TextField(
                             value = state.address,
                             onValueChange = {
+                                addViewModel.updateAddress(it)
+                                if (addViewModel.uiState.value.address.length >= 3) {
+                                    addViewModel.getAddressList()
+                                }
                                 onEvent(PropertyEvent.SetAddress(it))
                             },
                             label = { Text(stringResource(id = R.string.address)) },
