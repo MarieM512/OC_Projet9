@@ -9,11 +9,13 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class MapViewModel : ViewModel() {
     lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -23,7 +25,7 @@ class MapViewModel : ViewModel() {
 
     fun getCurrentLocation(camera: CameraPositionState) {
         fusedLocationClient
-            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
             .addOnSuccessListener { location ->
                 _uiState.update {
                     it.copy(
@@ -31,7 +33,11 @@ class MapViewModel : ViewModel() {
                     )
                 }
                 viewModelScope.launch {
-                    camera.animate(CameraUpdateFactory.newLatLng(uiState.value.currentLocation))
+                    try {
+                        camera.animate(CameraUpdateFactory.newLatLng(uiState.value.currentLocation))
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
                 println(uiState.value.currentLocation)
             }

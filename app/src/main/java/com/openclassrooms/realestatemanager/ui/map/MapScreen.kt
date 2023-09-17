@@ -14,18 +14,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.utils.Permissions
 
 @SuppressLint("PermissionLaunchedDuringComposition")
 @Composable
-fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
+fun MapScreen(
+    state: PropertyState,
+    navController: NavController,
+    mapViewModel: MapViewModel = viewModel()
+) {
     val context = LocalContext.current
     val mapUiState by mapViewModel.uiState.collectAsState()
     val openDialogLocation = remember { mutableStateOf(false) }
@@ -64,6 +72,15 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                 properties = mapProperties,
             ) {
                 mapViewModel.getCurrentLocation(cameraPositionState)
+                state.property.forEach { property ->
+                    Marker(
+                        state = MarkerState(position = LatLng(property.latitude, property.longitude)),
+                        onClick = {
+                            navController.navigate("property/$property")
+                            true
+                        },
+                    )
+                }
             }
         }
         if (openDialogLocation.value) {

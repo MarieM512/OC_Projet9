@@ -39,7 +39,7 @@ fun NavigationGraph(
 ) {
     NavHost(navController, startDestination = BottomNavItem.Map.route) {
         composable(BottomNavItem.Map.route) {
-            MapScreen()
+            MapScreen(state, navController)
         }
         composable(BottomNavItem.List.route) {
             when (windowSizeClass.widthSizeClass) {

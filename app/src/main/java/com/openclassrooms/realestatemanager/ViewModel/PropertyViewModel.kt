@@ -64,7 +64,8 @@ class PropertyViewModel(
                 val uriPicture = _state.value.uriPicture
                 val titlePicture = _state.value.titlePicture
                 val address = _state.value.address
-                val location = _state.value.location
+                val latitude = _state.value.latitude
+                val longitude = _state.value.longitude
                 val nearInterestPoint = _state.value.nearInterestPoint
                 val status = _state.value.status
                 val soldDate = _state.value.soldDate
@@ -89,7 +90,8 @@ class PropertyViewModel(
                         uriPicture = uriPicture,
                         titlePicture = titlePicture,
                         address = address,
-                        location = location,
+                        latitude = latitude,
+                        longitude = longitude,
                         nearInterestPoint = nearInterestPoint,
                         status = status,
                         entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
@@ -106,7 +108,8 @@ class PropertyViewModel(
                         uriPicture = uriPicture,
                         titlePicture = titlePicture,
                         address = address,
-                        location = location,
+                        latitude = latitude,
+                        longitude = longitude,
                         nearInterestPoint = nearInterestPoint,
                         status = status,
                         entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
@@ -128,7 +131,8 @@ class PropertyViewModel(
                         uriPicture = mutableListOf(),
                         titlePicture = mutableListOf(),
                         address = "",
-                        location = "",
+                        latitude = 0.0,
+                        longitude = 0.0,
                         nearInterestPoint = mutableListOf(),
                         status = Status.AVAILABLE,
                         entryDate = "",
@@ -162,10 +166,18 @@ class PropertyViewModel(
                 }
             }
 
-            is PropertyEvent.SetLocation -> {
+            is PropertyEvent.SetLatitude -> {
                 _state.update {
                     it.copy(
-                        location = event.location,
+                        latitude = event.latitude,
+                    )
+                }
+            }
+
+            is PropertyEvent.SetLongitude -> {
+                _state.update {
+                    it.copy(
+                        longitude = event.longitude,
                     )
                 }
             }

@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,8 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +74,7 @@ import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.model.Address
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarEdit
@@ -90,9 +94,10 @@ fun AddScreen(
     onEvent: (PropertyEvent) -> Unit,
     property: Property? = null,
     navController: NavController,
-    addViewModel: AddViewModel = viewModel()
+    addViewModel: AddViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val addUiState by addViewModel.uiState.collectAsState()
     var uri: Uri? = null
     var descriptionImage by remember { mutableStateOf("") }
     var typeExpanded by remember { mutableStateOf(false) }
@@ -100,6 +105,8 @@ fun AddScreen(
     val chip = remember { mutableStateListOf<InterestPoint>() }
     val selectedImageUris = remember { mutableStateListOf<String>() }
     val selectedImageTitles = remember { mutableStateListOf<String>() }
+    val location = remember { mutableStateListOf<Address>() }
+    var address by remember { mutableStateOf("") }
     val openDialogPicture = remember { mutableStateOf(false) }
     val openDialogFolderPermission = remember { mutableStateOf(false) }
     val openDialogCameraPermission = remember { mutableStateOf(false) }
@@ -110,7 +117,11 @@ fun AddScreen(
             if (uri != null) {
                 selectedImageUris.add(uri.toString())
                 selectedImageTitles.add(descriptionImage)
-                onEvent(PropertyEvent.SetUriPicture(ImageSave.saveImgInCache(context, uri).toString()))
+                onEvent(
+                    PropertyEvent.SetUriPicture(
+                        ImageSave.saveImgInCache(context, uri).toString(),
+                    ),
+                )
                 onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
             }
         },
@@ -140,14 +151,15 @@ fun AddScreen(
         }
     }
 
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
-        if (taken) {
-            uri.let { it1 -> selectedImageUris.add(it1.toString()) }
-            selectedImageTitles.add(descriptionImage)
-            uri?.toString()?.let { PropertyEvent.SetUriPicture(it) }?.let { onEvent(it) }
-            onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
+            if (taken) {
+                uri.let { it1 -> selectedImageUris.add(it1.toString()) }
+                selectedImageTitles.add(descriptionImage)
+                uri?.toString()?.let { PropertyEvent.SetUriPicture(it) }?.let { onEvent(it) }
+                onEvent(PropertyEvent.SetTitlePicture(descriptionImage))
+            }
         }
-    }
 
     if (property != null && state.address.isEmpty()) {
         property.uriPicture.let { selectedImageUris.addAll(it) }
@@ -170,11 +182,21 @@ fun AddScreen(
         onEvent(PropertyEvent.SetDescription(property.description))
     }
 
+    LaunchedEffect(addUiState.addressList) {
+        location.clear()
+        location.addAll(addUiState.addressList)
+    }
+
     AppTheme {
         Scaffold(
             topBar = {
                 if (property != null) {
-                    TopBarEdit(onEvent = onEvent, navController = navController, id = property.id, clear = { onEvent(PropertyEvent.SetAddress("")) })
+                    TopBarEdit(
+                        onEvent = onEvent,
+                        navController = navController,
+                        id = property.id,
+                        clear = { onEvent(PropertyEvent.SetAddress("")) },
+                    )
                 }
             },
             content = { innerPadding ->
@@ -192,7 +214,13 @@ fun AddScreen(
                             ) {
                                 Button(
                                     onClick = {
-                                        Permissions.checkAndRequestPermission(context, cameraPermission, cameraPermissionLauncher, openDialogPicture, takePicture)
+                                        Permissions.checkAndRequestPermission(
+                                            context,
+                                            cameraPermission,
+                                            cameraPermissionLauncher,
+                                            openDialogPicture,
+                                            takePicture,
+                                        )
                                     },
                                 ) {
                                     Icon(
@@ -204,7 +232,12 @@ fun AddScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        Permissions.checkAndRequestPermission(context, folderPermission, folderPermissionLauncher, openDialogPicture)
+                                        Permissions.checkAndRequestPermission(
+                                            context,
+                                            folderPermission,
+                                            folderPermissionLauncher,
+                                            openDialogPicture,
+                                        )
                                     },
                                     modifier = Modifier
                                         .padding(bottom = 8.dp),
@@ -217,10 +250,18 @@ fun AddScreen(
                                     )
                                 }
                                 if (openDialogCameraPermission.value) {
-                                    Permissions.dialogPermission("Permission denied", "Please go to your settings to allow camera permission in order to be able to take a picture from your device.", openDialogCameraPermission)
+                                    Permissions.dialogPermission(
+                                        "Permission denied",
+                                        "Please go to your settings to allow camera permission in order to be able to take a picture from your device.",
+                                        openDialogCameraPermission,
+                                    )
                                 }
                                 if (openDialogFolderPermission.value) {
-                                    Permissions.dialogPermission("Permission denied", "Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.", openDialogFolderPermission)
+                                    Permissions.dialogPermission(
+                                        "Permission denied",
+                                        "Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.",
+                                        openDialogFolderPermission,
+                                    )
                                 }
                                 if (openDialogPicture.value) {
                                     descriptionImage = ""
@@ -241,11 +282,19 @@ fun AddScreen(
                                                 onClick = {
                                                     if (descriptionImage.isNotEmpty()) {
                                                         if (takePicture.value) {
-                                                            uri = FileProvider.getUriForFile(Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
+                                                            uri = FileProvider.getUriForFile(
+                                                                Objects.requireNonNull(context),
+                                                                BuildConfig.APPLICATION_ID + ".provider",
+                                                                ImageSave.createImageFile(context),
+                                                            )
                                                             cameraLauncher.launch(uri)
                                                             takePicture.value = false
                                                         } else {
-                                                            multiplePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                            multiplePhotoPickerLauncher.launch(
+                                                                PickVisualMediaRequest(
+                                                                    ActivityResultContracts.PickVisualMedia.ImageOnly,
+                                                                ),
+                                                            )
                                                         }
                                                     }
                                                     openDialogPicture.value = false
@@ -324,7 +373,13 @@ fun AddScreen(
                                 InterestPoint.values().forEach { interest ->
                                     FilterChip(
                                         onClick = {
-                                            if (chip.contains(interest)) chip.remove(interest) else chip.add(interest)
+                                            if (chip.contains(interest)) {
+                                                chip.remove(interest)
+                                            } else {
+                                                chip.add(
+                                                    interest,
+                                                )
+                                            }
                                             onEvent(PropertyEvent.SetNearInterestPoint(interest))
                                         },
                                         label = { Text(text = interest.label) },
@@ -366,7 +421,11 @@ fun AddScreen(
                                     readOnly = true,
                                     value = state.type.label,
                                     onValueChange = {},
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = typeExpanded,
+                                        )
+                                    },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                                 )
@@ -392,7 +451,10 @@ fun AddScreen(
                                     onEvent(PropertyEvent.SetPrice(it.toInt()))
                                 },
                                 label = { Text(stringResource(id = R.string.price)) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next,
+                                ),
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                                     .weight(1f),
@@ -409,7 +471,10 @@ fun AddScreen(
                                     onEvent(PropertyEvent.SetSurface(it.toInt()))
                                 },
                                 label = { Text(stringResource(id = R.string.surface)) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next,
+                                ),
                                 singleLine = true,
                                 modifier = Modifier.weight(1f),
                             )
@@ -419,7 +484,10 @@ fun AddScreen(
                                     onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
                                 },
                                 label = { Text(stringResource(id = R.string.piece_number)) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next,
+                                ),
                                 singleLine = true,
                                 modifier = Modifier
                                     .weight(1f)
@@ -459,27 +527,50 @@ fun AddScreen(
                             }
                         }
                         TextField(
-                            value = state.address,
+                            value = address,
                             onValueChange = {
+                                address = it
                                 addViewModel.updateAddress(it)
                                 if (addViewModel.uiState.value.address.length >= 3) {
                                     addViewModel.getAddressList()
                                 }
-                                onEvent(PropertyEvent.SetAddress(it))
                             },
                             label = { Text(stringResource(id = R.string.address)) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next,
+                            ),
                             modifier = Modifier
                                 .padding(vertical = 8.dp)
                                 .fillMaxWidth(),
                         )
+                        if (location.isNotEmpty()) {
+                            location.forEach { item ->
+                                Text(
+                                    text = item.city,
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .clickable(onClick = {
+                                            address = item.city
+                                            onEvent(PropertyEvent.SetAddress(item.city))
+                                            onEvent(PropertyEvent.SetLatitude(item.lat))
+                                            onEvent(PropertyEvent.SetLongitude(item.lon))
+                                            location.clear()
+                                        }),
+                                )
+                            }
+                        }
+
                         TextField(
                             value = state.description,
                             onValueChange = {
                                 onEvent(PropertyEvent.SetDescription(it))
                             },
                             label = { Text(stringResource(id = R.string.description)) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done,
+                            ),
                             modifier = Modifier
                                 .padding(vertical = 8.dp)
                                 .height(200.dp)
@@ -496,6 +587,7 @@ fun AddScreen(
                                     selectedImageUris.clear()
                                     selectedImageTitles.clear()
                                     chip.clear()
+                                    location.clear()
                                     if (property != null) {
                                         onEvent(PropertyEvent.SetStatus(Status.SOLD))
                                         onEvent(
