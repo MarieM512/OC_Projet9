@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -30,6 +31,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
+import com.openclassrooms.realestatemanager.database.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 
@@ -62,6 +64,9 @@ fun ListScreen(
                             propertyClick.value = property
                         }
                     },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (property.status == Status.SOLD) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer
+                    ),
                 ) {
                     Column(
                         modifier = Modifier
