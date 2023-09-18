@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.database
 
 sealed interface PropertyEvent {
     data class SaveProperty(val id: Int) : PropertyEvent
+    object Reset : PropertyEvent
 
     // TO DELETE
     object DeleteAllProperty : PropertyEvent
