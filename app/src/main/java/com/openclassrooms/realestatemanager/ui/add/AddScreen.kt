@@ -390,12 +390,12 @@ fun AddScreen(
                         if (location.isNotEmpty()) {
                             location.forEach { item ->
                                 Text(
-                                    text = item.city,
+                                    text = item.address,
                                     modifier = Modifier
                                         .padding(4.dp)
                                         .clickable(onClick = {
-                                            address = item.city
-                                            onEvent(PropertyEvent.SetAddress(item.city))
+                                            address = item.address
+                                            onEvent(PropertyEvent.SetAddress(item.address))
                                             onEvent(PropertyEvent.SetLatitude(item.lat))
                                             onEvent(PropertyEvent.SetLongitude(item.lon))
                                             location.clear()

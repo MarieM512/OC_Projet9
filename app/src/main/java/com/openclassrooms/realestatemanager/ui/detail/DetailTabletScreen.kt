@@ -53,7 +53,7 @@ fun DetailTabletScreen(
     val context = LocalContext.current
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(property.latitude, property.longitude), 18f)
+        position = CameraPosition.fromLatLngZoom(LatLng(property.latitude, property.longitude), 15f)
     }
 
     AppTheme() {
