@@ -27,11 +27,12 @@ class PropertyViewModel(
     private val dao: PropertyDao,
 ) : ViewModel() {
 
-    private val _sortType = MutableStateFlow(SortType.ENTRY_DATE)
+    private val _sortType = MutableStateFlow(SortType.RESET)
     private val _properties = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.ENTRY_DATE -> dao.getPropertiesOrderedByEntryDate()
+                SortType.RESET -> dao.getAllProperties()
+                SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface.toInt(), _state.value.maxSurface.toInt())
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -51,6 +52,31 @@ class PropertyViewModel(
             PropertyEvent.DeleteAllProperty -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     dao.nukeTable()
+                }
+            }
+
+            is PropertyEvent.FilterBySurfaceMin -> {
+                _state.update {
+                    it.copy(
+                        minSurface = event.min.toString(),
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterBySurfaceMax -> {
+                _state.update {
+                    it.copy(
+                        maxSurface = event.max.toString(),
+                    )
+                }
+            }
+
+            PropertyEvent.ResetFilter -> {
+                _state.update {
+                    it.copy(
+                        minSurface = "",
+                        maxSurface = "",
+                    )
                 }
             }
 

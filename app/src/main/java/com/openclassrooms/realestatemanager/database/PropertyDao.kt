@@ -8,12 +8,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PropertyDao {
 
+    // TO DELETE
+    @Query("DELETE FROM property")
+    fun nukeTable()
+
     @Upsert
     suspend fun upsertProperty(property: Property)
 
-    @Query("SELECT * FROM property ORDER BY entryDate ASC")
-    fun getPropertiesOrderedByEntryDate(): Flow<List<Property>>
+    @Query("SELECT * FROM property")
+    fun getAllProperties(): Flow<List<Property>>
 
-    @Query("DELETE FROM property")
-    fun nukeTable()
+    @Query("SELECT * FROM property WHERE surface BETWEEN :min AND :max")
+    fun getPropertyFilteredBySurface(min: Int, max: Int): Flow<List<Property>>
 }

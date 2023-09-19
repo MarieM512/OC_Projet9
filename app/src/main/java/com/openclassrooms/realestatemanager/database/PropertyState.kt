@@ -17,5 +17,8 @@ data class PropertyState(
     val entryDate: String = "",
     val soldDate: String = "",
     val agent: Agent = Agent.STEPHANE_PLAZA,
-    val sortType: SortType = SortType.ENTRY_DATE
+    val sortType: SortType = SortType.RESET,
+
+    val minSurface: String = "",
+    val maxSurface: String = "",
 )

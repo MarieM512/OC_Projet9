@@ -22,9 +22,9 @@ import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import com.openclassrooms.realestatemanager.ui.FilterView
 import com.openclassrooms.realestatemanager.ui.add.AddScreen
 import com.openclassrooms.realestatemanager.ui.detail.DetailScreen
+import com.openclassrooms.realestatemanager.ui.filter.FilterScreen
 import com.openclassrooms.realestatemanager.ui.list.ListScreen
 import com.openclassrooms.realestatemanager.ui.list.ListTabletScreen
 import com.openclassrooms.realestatemanager.ui.loan.LoanScreen
@@ -54,7 +54,7 @@ fun NavigationGraph(
             AddScreen(state = state, onEvent = viewModel::onEvent, navController = navController)
         }
         composable(BottomNavItem.Filter.route) {
-            FilterView()
+            FilterScreen(state, viewModel::onEvent)
         }
         composable(BottomNavItem.Loan.route) {
             LoanScreen()
