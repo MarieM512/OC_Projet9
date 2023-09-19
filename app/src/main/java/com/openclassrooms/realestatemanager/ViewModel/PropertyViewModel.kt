@@ -54,6 +54,28 @@ class PropertyViewModel(
                 }
             }
 
+            PropertyEvent.Reset -> {
+                _state.update {
+                    it.copy(
+                        type = PropertyType.HOUSE,
+                        price = 0,
+                        surface = 0,
+                        pieceNumber = 0,
+                        description = "",
+                        uriPicture = mutableListOf(),
+                        titlePicture = mutableListOf(),
+                        address = "",
+                        latitude = 0.0,
+                        longitude = 0.0,
+                        nearInterestPoint = mutableListOf(),
+                        status = Status.AVAILABLE,
+                        entryDate = "",
+                        soldDate = "",
+                        agent = Agent.STEPHANE_PLAZA,
+                    )
+                }
+            }
+
             is PropertyEvent.SaveProperty -> {
                 val id = event.id
                 val type = _state.value.type
@@ -70,12 +92,6 @@ class PropertyViewModel(
                 val status = _state.value.status
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
-
-                if (
-                    description.isBlank() || address.isBlank()
-                ) {
-                    return
-                }
 
                 val property: Property
 
@@ -122,7 +138,6 @@ class PropertyViewModel(
                 }
                 _state.update {
                     it.copy(
-                        isAddingProperty = false,
                         type = PropertyType.HOUSE,
                         price = 0,
                         surface = 0,

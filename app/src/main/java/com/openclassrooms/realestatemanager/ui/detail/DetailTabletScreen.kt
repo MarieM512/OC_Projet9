@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.detail
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -28,6 +31,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.Status
@@ -41,6 +51,10 @@ fun DetailTabletScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(property.latitude, property.longitude), 18f)
+    }
 
     AppTheme() {
         LazyColumn(
@@ -124,9 +138,7 @@ fun DetailTabletScreen(
                                 modifier = Modifier
                                     .weight(1f),
                             ) {
-                                Text(property.type.label)
-                                Text(property.agent.label)
-                                Text("Surface: ${property.surface}")
+                                Text("Surface: ${property.surface} m²")
                                 Text("Piece: ${property.pieceNumber}")
                             }
                             Column(
@@ -134,10 +146,8 @@ fun DetailTabletScreen(
                                     .weight(1f),
                                 horizontalAlignment = Alignment.End,
                             ) {
-                                Row() {
-                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
-                                    Text(property.address)
-                                }
+                                Text(property.type.label)
+                                Text(property.agent.label)
                             }
                         }
                         Divider()
@@ -145,6 +155,36 @@ fun DetailTabletScreen(
                             text = property.description,
                             textAlign = TextAlign.Justify,
                         )
+                        Divider()
+                        Row() {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f),
+                            ) {
+                                Row() {
+                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                    Text(property.address)
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(2f),
+                                horizontalAlignment = Alignment.End,
+                            ) {
+                                GoogleMap(
+                                    modifier = Modifier
+                                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary))
+                                        .fillMaxWidth()
+                                        .height(240.dp),
+                                    cameraPositionState = cameraPositionState,
+                                    uiSettings = MapUiSettings(rotationGesturesEnabled = false, scrollGesturesEnabled = false, scrollGesturesEnabledDuringRotateOrZoom = false, tiltGesturesEnabled = false, zoomControlsEnabled = false, zoomGesturesEnabled = false),
+                                ) {
+                                    Marker(
+                                        state = MarkerState(position = LatLng(property.latitude, property.longitude)),
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

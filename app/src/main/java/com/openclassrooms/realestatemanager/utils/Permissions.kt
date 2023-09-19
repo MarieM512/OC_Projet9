@@ -12,27 +12,8 @@ import androidx.core.content.ContextCompat
 
 object Permissions {
 
-    @Composable
-    fun dialogPermission(title: String, message: String, openDialog: MutableState<Boolean>) {
-        AlertDialog(
-            onDismissRequest = {},
-            title = {
-                Text(title)
-            },
-            text = {
-                Text(message)
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                    },
-                ) {
-                    Text("Got it")
-                }
-            },
-        )
-    }
+    const val cameraPermission = android.Manifest.permission.CAMERA
+    const val folderPermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
     fun checkAndRequestLocationPermissions(
         context: Context,
