@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.ui.composant.alert.DialogPermission
+import com.openclassrooms.realestatemanager.ui.composant.alert.DialogInformation
 import com.openclassrooms.realestatemanager.utils.Permissions
 
 @Composable
@@ -59,14 +59,14 @@ fun Pictures(
         )
     }
     if (openDialogCameraPermission.value) {
-        DialogPermission(
+        DialogInformation(
             "Permission denied",
             "Please go to your settings to allow camera permission in order to be able to take a picture from your device.",
             openDialogCameraPermission,
         )
     }
     if (openDialogFolderPermission.value) {
-        DialogPermission(
+        DialogInformation(
             "Permission denied",
             "Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.",
             openDialogFolderPermission,

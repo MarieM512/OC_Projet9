@@ -58,6 +58,7 @@ import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.Status
 import com.openclassrooms.realestatemanager.model.Address
 import com.openclassrooms.realestatemanager.theme.AppTheme
+import com.openclassrooms.realestatemanager.ui.composant.alert.DialogInformation
 import com.openclassrooms.realestatemanager.ui.composant.alert.DialogPicture
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 import com.openclassrooms.realestatemanager.ui.composant.button.Pictures
@@ -107,6 +108,9 @@ fun AddScreen(
             }
         },
     )
+
+    val openDialogMissing = remember { mutableStateOf(false) }
+    val openDialogSuccess = remember { mutableStateOf(false) }
 
     // Permissions
     val openDialogPicture = remember { mutableStateOf(false) }
@@ -423,11 +427,6 @@ fun AddScreen(
                         ) {
                             Button(
                                 onClick = {
-                                    selectedImageUris.clear()
-                                    selectedImageTitles.clear()
-                                    chip.clear()
-                                    address = ""
-                                    location.clear()
                                     if (property != null) {
                                         onEvent(PropertyEvent.SetStatus(Status.SOLD))
                                         onEvent(
@@ -440,7 +439,17 @@ fun AddScreen(
                                         onEvent(PropertyEvent.SaveProperty(property.id))
                                         navController.navigate(BottomNavItem.List.route)
                                     } else {
-                                        onEvent(PropertyEvent.SaveProperty(-1))
+                                        if (state.address.isEmpty() || state.description.isEmpty() || state.uriPicture.isEmpty() || state.price == 0 || state.surface == 0 || state.pieceNumber == 0) {
+                                            openDialogMissing.value = true
+                                        } else {
+                                            selectedImageUris.clear()
+                                            selectedImageTitles.clear()
+                                            chip.clear()
+                                            address = ""
+                                            location.clear()
+                                            openDialogSuccess.value = true
+                                            onEvent(PropertyEvent.SaveProperty(-1))
+                                        }
                                     }
                                 },
                                 modifier = Modifier
@@ -468,6 +477,12 @@ fun AddScreen(
                                     textAlign = TextAlign.Center,
                                     fontSize = 16.sp,
                                 )
+                            }
+                            if (openDialogMissing.value) {
+                                DialogInformation("Missing information", "Please be sure to fill all the information with at least one picture.", openDialogMissing)
+                            }
+                            if (openDialogSuccess.value) {
+                                DialogInformation("Success", "You have successfully add your property.", openDialogSuccess)
                             }
                         }
                     }

@@ -17,6 +17,5 @@ data class PropertyState(
     val entryDate: String = "",
     val soldDate: String = "",
     val agent: Agent = Agent.STEPHANE_PLAZA,
-    val isAddingProperty: Boolean = false,
     val sortType: SortType = SortType.ENTRY_DATE
 )

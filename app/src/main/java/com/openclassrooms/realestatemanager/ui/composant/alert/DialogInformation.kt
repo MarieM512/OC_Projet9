@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
 @Composable
-fun DialogPermission(title: String, message: String, openDialog: MutableState<Boolean>) {
+fun DialogInformation(title: String, message: String, openDialog: MutableState<Boolean>) {
     AlertDialog(
         onDismissRequest = {},
         title = {

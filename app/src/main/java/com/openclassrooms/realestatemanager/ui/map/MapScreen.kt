@@ -25,7 +25,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
-import com.openclassrooms.realestatemanager.ui.composant.alert.DialogPermission
+import com.openclassrooms.realestatemanager.ui.composant.alert.DialogInformation
 import com.openclassrooms.realestatemanager.utils.Permissions
 
 @SuppressLint("PermissionLaunchedDuringComposition")
@@ -85,7 +85,7 @@ fun MapScreen(
             }
         }
         if (openDialogLocation.value) {
-            DialogPermission("Permission denied", "Please go to your settings to allow location permission in order to be able to use the map.", openMap)
+            DialogInformation("Permission denied", "Please go to your settings to allow location permission in order to be able to use the map.", openMap)
         }
     }
 }

@@ -57,7 +57,6 @@ class PropertyViewModel(
             PropertyEvent.Reset -> {
                 _state.update {
                     it.copy(
-                        isAddingProperty = false,
                         type = PropertyType.HOUSE,
                         price = 0,
                         surface = 0,
@@ -93,12 +92,6 @@ class PropertyViewModel(
                 val status = _state.value.status
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
-
-                if (
-                    description.isBlank() || address.isBlank()
-                ) {
-                    return
-                }
 
                 val property: Property
 
@@ -145,7 +138,6 @@ class PropertyViewModel(
                 }
                 _state.update {
                     it.copy(
-                        isAddingProperty = false,
                         type = PropertyType.HOUSE,
                         price = 0,
                         surface = 0,
