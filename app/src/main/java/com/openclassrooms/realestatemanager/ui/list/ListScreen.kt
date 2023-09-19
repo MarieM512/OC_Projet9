@@ -85,7 +85,7 @@ fun ListScreen(
                                     modifier = Modifier
                                         .weight(1f),
                                 ) {
-                                    Text(text = "Surface: ${property.surface}")
+                                    Text(text = "Surface: ${property.surface} m²")
                                     Text(text = "Piece: ${property.pieceNumber}")
                                 }
                                 Column(

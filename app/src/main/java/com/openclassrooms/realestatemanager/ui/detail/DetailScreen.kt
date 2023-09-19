@@ -102,7 +102,7 @@ fun DetailScreen(
                                 modifier = Modifier
                                     .weight(1f),
                             ) {
-                                Text("Surface: ${property.surface}")
+                                Text("Surface: ${property.surface} m²")
                                 Text("Piece: ${property.pieceNumber}")
                             }
                             Column(
