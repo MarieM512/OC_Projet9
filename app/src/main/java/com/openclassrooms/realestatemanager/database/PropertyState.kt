@@ -19,6 +19,6 @@ data class PropertyState(
     val agent: Agent = Agent.STEPHANE_PLAZA,
     val sortType: SortType = SortType.RESET,
 
-    val minSurface: String = "",
-    val maxSurface: String = "",
+    val minSurface: Int = 0,
+    val maxSurface: Int = 0,
 )

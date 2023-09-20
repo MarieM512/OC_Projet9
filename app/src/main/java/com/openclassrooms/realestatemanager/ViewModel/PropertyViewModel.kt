@@ -32,7 +32,7 @@ class PropertyViewModel(
         .flatMapLatest { sortType ->
             when (sortType) {
                 SortType.RESET -> dao.getAllProperties()
-                SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface.toInt(), _state.value.maxSurface.toInt())
+                SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface, _state.value.maxSurface)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -58,7 +58,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterBySurfaceMin -> {
                 _state.update {
                     it.copy(
-                        minSurface = event.min.toString(),
+                        minSurface = event.min,
                     )
                 }
             }
@@ -66,7 +66,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterBySurfaceMax -> {
                 _state.update {
                     it.copy(
-                        maxSurface = event.max.toString(),
+                        maxSurface = event.max,
                     )
                 }
             }
@@ -74,8 +74,8 @@ class PropertyViewModel(
             PropertyEvent.ResetFilter -> {
                 _state.update {
                     it.copy(
-                        minSurface = "",
-                        maxSurface = "",
+                        minSurface = 0,
+                        maxSurface = 0,
                     )
                 }
             }

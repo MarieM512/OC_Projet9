@@ -15,9 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 
 @Composable
-fun CardFilterComparison(title: String, min: String, max: String, minEvent: (String) -> Unit, maxEvent: (String) -> Unit) {
+fun CardFilterComparison(
+    title: String,
+    min: Int,
+    max: Int,
+    minEvent: (String) -> Unit,
+    maxEvent: (String) -> Unit,
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -31,8 +38,14 @@ fun CardFilterComparison(title: String, min: String, max: String, minEvent: (Str
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextField(
-                    value = min,
-                    onValueChange = minEvent,
+                    value = min.toString(),
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            minEvent("0")
+                        } else if (it.isDigitsOnly()) {
+                            minEvent(it)
+                        }
+                    },
                     label = {},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -45,12 +58,18 @@ fun CardFilterComparison(title: String, min: String, max: String, minEvent: (Str
                 )
                 Text("<= ${title.lowercase()} <=")
                 TextField(
-                    value = max,
-                    onValueChange = maxEvent,
+                    value = max.toString(),
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            maxEvent("0")
+                        } else if (it.isDigitsOnly()) {
+                            maxEvent(it)
+                        }
+                    },
                     label = {},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next,
+                        imeAction = ImeAction.Done,
                     ),
                     singleLine = true,
                     modifier = Modifier
