@@ -65,7 +65,7 @@ fun FilterScreen(
                 Button(
                     onClick = {
 //                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
-                        onEvent(PropertyEvent.SortProperty(SortType.PIECE))
+                        onEvent(PropertyEvent.SortProperty(SortType.FILTER))
                     },
                 ) {
                     Text("Apply")

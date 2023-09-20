@@ -35,4 +35,14 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE pieceNumber BETWEEN :min AND :max")
     fun getPropertyFilteredByPiece(min: Int, max: Int): Flow<List<Property>>
+
+    @Query(
+        "SELECT * FROM property WHERE (:minSurface AND :maxSurface IS NULL OR surface BETWEEN :minSurface AND :maxSurface) " +
+            "AND (:minPrice AND :maxPrice IS NULL OR price BETWEEN :minPrice AND :maxPrice) " +
+            "AND (:agent IS NULL OR agent LIKE :agent) " +
+            "AND (:address IS NULL OR address LIKE '%' || :address || '%') " +
+            "AND (:type IS NULL OR type LIKE :type) " +
+            "AND (:minPiece AND :maxPiece IS NULL OR pieceNumber BETWEEN :minPiece AND :maxPiece)",
+    )
+    fun getPropertyFiltered(minSurface: Int, maxSurface: Int, minPrice: Int, maxPrice: Int, agent: Agent, address: String, type: PropertyType, minPiece: Int, maxPiece: Int): Flow<List<Property>>
 }

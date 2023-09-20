@@ -38,6 +38,15 @@ class PropertyViewModel(
                 SortType.ADDRESS -> dao.getPropertyFilteredByAddress(_state.value.filterAddress)
                 SortType.TYPE -> dao.getPropertyFilteredByType(_state.value.filterType)
                 SortType.PIECE -> dao.getPropertyFilteredByPiece(_state.value.minPiece, _state.value.maxPiece)
+                SortType.FILTER -> dao.getPropertyFiltered(
+                    _state.value.minSurface, _state.value.maxSurface,
+                    _state.value.minPrice, _state.value.maxPrice,
+                    _state.value.filterAgent,
+                    _state.value.filterAddress,
+                    _state.value.filterType,
+                    _state.value.minPiece,
+                    _state.value.maxPiece,
+                )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -95,7 +104,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterByAgent -> {
                 _state.update {
                     it.copy(
-                        filterAgent = event.agent
+                        filterAgent = event.agent,
                     )
                 }
             }
@@ -103,7 +112,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterByAddress -> {
                 _state.update {
                     it.copy(
-                        filterAddress = event.address
+                        filterAddress = event.address,
                     )
                 }
             }
@@ -111,7 +120,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterByType -> {
                 _state.update {
                     it.copy(
-                        filterType = event.type
+                        filterType = event.type,
                     )
                 }
             }
@@ -119,7 +128,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterByPieceMin -> {
                 _state.update {
                     it.copy(
-                        minPiece = event.min
+                        minPiece = event.min,
                     )
                 }
             }
@@ -127,7 +136,7 @@ class PropertyViewModel(
             is PropertyEvent.FilterByPieceMax -> {
                 _state.update {
                     it.copy(
-                        maxPiece = event.max
+                        maxPiece = event.max,
                     )
                 }
             }
