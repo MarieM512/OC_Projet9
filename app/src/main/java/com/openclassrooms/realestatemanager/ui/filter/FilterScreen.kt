@@ -31,6 +31,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
+import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.card.CardFilterComparison
@@ -42,6 +43,7 @@ fun FilterScreen(
     onEvent: (PropertyEvent) -> Unit,
 ) {
     var agentExpanded by remember { mutableStateOf(false) }
+    var typeExpanded by remember { mutableStateOf(false) }
 
     AppTheme {
         Column(
@@ -66,7 +68,7 @@ fun FilterScreen(
                 Button(
                     onClick = {
 //                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
-                        onEvent(PropertyEvent.SortProperty(SortType.ADDRESS))
+                        onEvent(PropertyEvent.SortProperty(SortType.TYPE))
                     },
                 ) {
                     Text("Apply")
@@ -118,7 +120,7 @@ fun FilterScreen(
                                         )
                                     },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 )
                                 ExposedDropdownMenu(
                                     expanded = agentExpanded,
@@ -160,6 +162,54 @@ fun FilterScreen(
                                     imeAction = ImeAction.Done,
                                 ),
                             )
+                        }
+                    }
+                }
+                item {
+                    Card {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text("Type")
+                            ExposedDropdownMenuBox(
+                                expanded = typeExpanded,
+                                onExpandedChange = {
+                                    typeExpanded = !typeExpanded
+                                },
+                                modifier = Modifier.padding(vertical = 8.dp),
+                            ) {
+                                TextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor(),
+                                    readOnly = true,
+                                    value = state.filterType.label,
+                                    onValueChange = {},
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = typeExpanded,
+                                        )
+                                    },
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = typeExpanded,
+                                    onDismissRequest = { typeExpanded = false },
+                                ) {
+                                    PropertyType.values().forEach { type ->
+                                        DropdownMenuItem(
+                                            text = { Text(type.label) },
+                                            onClick = {
+                                                onEvent(PropertyEvent.FilterByType(type))
+                                                typeExpanded = false
+                                            },
+                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

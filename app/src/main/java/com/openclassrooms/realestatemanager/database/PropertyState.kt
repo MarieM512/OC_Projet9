@@ -25,4 +25,5 @@ data class PropertyState(
     val maxPrice: Int = 0,
     val filterAgent: Agent = Agent.STEPHANE_PLAZA,
     val filterAddress: String = "",
+    val filterType: PropertyType = PropertyType.HOUSE,
 )

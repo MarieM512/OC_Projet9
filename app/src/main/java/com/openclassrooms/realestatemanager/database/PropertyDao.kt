@@ -29,4 +29,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE address LIKE '%' || :address || '%'")
     fun getPropertyFilteredByAddress(address: String): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE type LIKE :type")
+    fun getPropertyFilteredByType(type: PropertyType): Flow<List<Property>>
 }
