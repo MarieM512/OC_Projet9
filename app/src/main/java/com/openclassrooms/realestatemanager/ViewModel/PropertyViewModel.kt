@@ -56,12 +56,6 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
-            //
-            PropertyEvent.DeleteAllProperty -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    dao.nukeTable()
-                }
-            }
 
             is PropertyEvent.FilterBySurfaceMin -> {
                 _state.update {

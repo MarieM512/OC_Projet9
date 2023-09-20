@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
@@ -27,18 +26,21 @@ import com.openclassrooms.realestatemanager.ui.detail.DetailTabletScreen
 @Composable
 fun ListTabletScreen(
     state: PropertyState,
-    viewModel: PropertyViewModel,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
 ) {
     val property: MutableState<Property?> = remember { mutableStateOf(null) }
-    AppTheme() {
-        Row() {
+    AppTheme {
+        Row {
             Column(
                 modifier = Modifier
                     .weight(1f),
             ) {
-                property.value = ListScreen(state = state, viewModel = viewModel, navController = navController, windowSizeClass = windowSizeClass)
+                property.value = ListScreen(
+                    state = state,
+                    navController = navController,
+                    windowSizeClass = windowSizeClass,
+                )
             }
             Column(
                 modifier = Modifier

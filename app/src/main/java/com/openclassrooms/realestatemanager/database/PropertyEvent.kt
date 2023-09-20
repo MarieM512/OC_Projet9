@@ -16,8 +16,6 @@ sealed interface PropertyEvent {
     data class FilterByPieceMax(val max: Int) : PropertyEvent
     object ResetFilter : PropertyEvent
 
-    // TO DELETE
-    object DeleteAllProperty : PropertyEvent
     data class SetType(val type: PropertyType) : PropertyEvent
     data class SetPrice(val price: Int) : PropertyEvent
     data class SetSurface(val surface: Int) : PropertyEvent

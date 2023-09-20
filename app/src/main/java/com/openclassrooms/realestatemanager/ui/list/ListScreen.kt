@@ -28,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.Status
@@ -39,7 +38,6 @@ import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 @Composable
 fun ListScreen(
     state: PropertyState,
-    viewModel: PropertyViewModel,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
 ): Property? {
@@ -65,7 +63,7 @@ fun ListScreen(
                         }
                     },
                     colors = CardDefaults.cardColors(
-                        containerColor = if (property.status == Status.SOLD) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer
+                        containerColor = if (property.status == Status.SOLD) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
                     ),
                 ) {
                     Column(
@@ -80,7 +78,7 @@ fun ListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(text = property.type.label)
-                            Row() {
+                            Row {
                                 Column(
                                     modifier = Modifier
                                         .weight(1f),

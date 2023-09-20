@@ -8,10 +8,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PropertyDao {
 
-    // TO DELETE
-    @Query("DELETE FROM property")
-    fun nukeTable()
-
     @Upsert
     suspend fun upsertProperty(property: Property)
 

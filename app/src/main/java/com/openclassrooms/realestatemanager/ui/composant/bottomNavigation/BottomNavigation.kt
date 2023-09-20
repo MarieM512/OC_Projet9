@@ -44,9 +44,9 @@ fun NavigationGraph(
         composable(BottomNavItem.List.route) {
             when (windowSizeClass.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-                    ListScreen(state, viewModel, navController, windowSizeClass)
+                    ListScreen(state, navController, windowSizeClass)
                 } else -> {
-                    ListTabletScreen(state, viewModel, navController, windowSizeClass)
+                    ListTabletScreen(state, navController, windowSizeClass)
                 }
             }
         }

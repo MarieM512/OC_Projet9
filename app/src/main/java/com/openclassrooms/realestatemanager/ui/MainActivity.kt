@@ -51,8 +51,6 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
             val windowSizeClass = calculateWindowSizeClass(activity = this)
-//            deleteDatabase("properties.db")
-//            PropertyScreen(state = state, onEvent = viewModel::onEvent)
             Scaffold(
                 bottomBar = {
                     BottomBar(navController = navController)

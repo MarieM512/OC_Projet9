@@ -50,7 +50,7 @@ fun Carousel(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
                 Text(
                     text = property.titlePicture[page],
