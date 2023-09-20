@@ -4,4 +4,5 @@ enum class SortType {
     RESET,
     SURFACE,
     PRICE,
+    AGENT,
 }

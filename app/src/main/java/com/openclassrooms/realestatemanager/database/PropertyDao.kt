@@ -23,4 +23,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE price BETWEEN :min AND :max")
     fun getPropertyFilteredByPrice(min: Int, max: Int): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE agent LIKE :agent")
+    fun getPropertyFilteredByAgent(agent: Agent): Flow<List<Property>>
 }
