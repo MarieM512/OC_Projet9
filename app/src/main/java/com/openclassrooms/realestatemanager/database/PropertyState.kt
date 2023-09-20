@@ -20,12 +20,12 @@ data class PropertyState(
     val sortType: SortType = SortType.RESET,
 
     val minSurface: Int = 0,
-    val maxSurface: Int = 0,
+    val maxSurface: Int = 10000,
     val minPrice: Int = 0,
-    val maxPrice: Int = 0,
-    val filterAgent: Agent = Agent.STEPHANE_PLAZA,
+    val maxPrice: Int = 1000000000,
+    val filterAgent: Agent? = null,
     val filterAddress: String = "",
-    val filterType: PropertyType = PropertyType.HOUSE,
+    val filterType: PropertyType? = null,
     val minPiece: Int = 0,
-    val maxPiece: Int = 0,
+    val maxPiece: Int = 1000,
 )

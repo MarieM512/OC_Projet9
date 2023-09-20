@@ -64,7 +64,6 @@ fun FilterScreen(
                 Text("Filters")
                 Button(
                     onClick = {
-//                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
                         onEvent(PropertyEvent.SortProperty(SortType.FILTER))
                     },
                 ) {
@@ -76,6 +75,15 @@ fun FilterScreen(
             ) {
                 item {
                     CardFilterComparison(
+                        title = "Price",
+                        min = state.minPrice,
+                        max = state.maxPrice,
+                        minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) },
+                        maxEvent = { onEvent(PropertyEvent.FilterByPriceMax(it.toInt())) },
+                    )
+                }
+                item {
+                    CardFilterComparison(
                         title = "Surface",
                         min = state.minSurface,
                         max = state.maxSurface,
@@ -85,11 +93,11 @@ fun FilterScreen(
                 }
                 item {
                     CardFilterComparison(
-                        title = "Price",
-                        min = state.minPrice,
-                        max = state.maxPrice,
-                        minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) },
-                        maxEvent = { onEvent(PropertyEvent.FilterByPriceMax(it.toInt())) },
+                        title = "Piece",
+                        min = state.minPiece,
+                        max = state.maxPiece,
+                        minEvent = { onEvent(PropertyEvent.FilterByPieceMin(it.toInt())) },
+                        maxEvent = { onEvent(PropertyEvent.FilterByPieceMax(it.toInt())) },
                     )
                 }
                 item {
@@ -98,37 +106,38 @@ fun FilterScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text("Agent")
+                            Text("Type")
                             ExposedDropdownMenuBox(
-                                expanded = agentExpanded,
-                                onExpandedChange = { agentExpanded = !agentExpanded },
-                                modifier = Modifier.padding(vertical = 8.dp),
+                                expanded = typeExpanded,
+                                onExpandedChange = {
+                                    typeExpanded = !typeExpanded
+                                },
                             ) {
                                 TextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     readOnly = true,
-                                    value = state.filterAgent.label,
+                                    value = state.filterType?.label ?: "",
                                     onValueChange = {},
                                     trailingIcon = {
                                         ExposedDropdownMenuDefaults.TrailingIcon(
-                                            expanded = agentExpanded,
+                                            expanded = typeExpanded,
                                         )
                                     },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 )
                                 ExposedDropdownMenu(
-                                    expanded = agentExpanded,
-                                    onDismissRequest = { agentExpanded = false },
+                                    expanded = typeExpanded,
+                                    onDismissRequest = { typeExpanded = false },
                                 ) {
-                                    Agent.values().forEach { agent ->
+                                    PropertyType.values().forEach { type ->
                                         DropdownMenuItem(
-                                            text = { Text(agent.label) },
+                                            text = { Text(type.label) },
                                             onClick = {
-                                                onEvent(PropertyEvent.FilterByAgent(agent))
-                                                agentExpanded = false
+                                                onEvent(PropertyEvent.FilterByType(type))
+                                                typeExpanded = false
                                             },
                                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                         )
@@ -168,39 +177,36 @@ fun FilterScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text("Type")
+                            Text("Agent")
                             ExposedDropdownMenuBox(
-                                expanded = typeExpanded,
-                                onExpandedChange = {
-                                    typeExpanded = !typeExpanded
-                                },
-                                modifier = Modifier.padding(vertical = 8.dp),
+                                expanded = agentExpanded,
+                                onExpandedChange = { agentExpanded = !agentExpanded },
                             ) {
                                 TextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     readOnly = true,
-                                    value = state.filterType.label,
+                                    value = state.filterAgent?.label ?: "",
                                     onValueChange = {},
                                     trailingIcon = {
                                         ExposedDropdownMenuDefaults.TrailingIcon(
-                                            expanded = typeExpanded,
+                                            expanded = agentExpanded,
                                         )
                                     },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 )
                                 ExposedDropdownMenu(
-                                    expanded = typeExpanded,
-                                    onDismissRequest = { typeExpanded = false },
+                                    expanded = agentExpanded,
+                                    onDismissRequest = { agentExpanded = false },
                                 ) {
-                                    PropertyType.values().forEach { type ->
+                                    Agent.values().forEach { agent ->
                                         DropdownMenuItem(
-                                            text = { Text(type.label) },
+                                            text = { Text(agent.label) },
                                             onClick = {
-                                                onEvent(PropertyEvent.FilterByType(type))
-                                                typeExpanded = false
+                                                onEvent(PropertyEvent.FilterByAgent(agent))
+                                                agentExpanded = false
                                             },
                                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                         )
@@ -209,15 +215,6 @@ fun FilterScreen(
                             }
                         }
                     }
-                }
-                item {
-                    CardFilterComparison(
-                        title = "Piece",
-                        min = state.minPiece,
-                        max = state.maxPiece,
-                        minEvent = { onEvent(PropertyEvent.FilterByPieceMin(it.toInt())) },
-                        maxEvent = { onEvent(PropertyEvent.FilterByPieceMax(it.toInt())) },
-                    )
                 }
             }
         }

@@ -4,6 +4,7 @@ sealed interface PropertyEvent {
     data class SaveProperty(val id: Int) : PropertyEvent
     object Reset : PropertyEvent
 
+    // Filter
     data class FilterBySurfaceMin(val min: Int) : PropertyEvent
     data class FilterBySurfaceMax(val max: Int) : PropertyEvent
     data class FilterByPriceMin(val min: Int) : PropertyEvent

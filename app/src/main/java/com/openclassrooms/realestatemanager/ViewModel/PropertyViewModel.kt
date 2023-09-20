@@ -32,12 +32,6 @@ class PropertyViewModel(
         .flatMapLatest { sortType ->
             when (sortType) {
                 SortType.RESET -> dao.getAllProperties()
-                SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface, _state.value.maxSurface)
-                SortType.PRICE -> dao.getPropertyFilteredByPrice(_state.value.minPrice, _state.value.maxPrice)
-                SortType.AGENT -> dao.getPropertyFilteredByAgent(_state.value.filterAgent)
-                SortType.ADDRESS -> dao.getPropertyFilteredByAddress(_state.value.filterAddress)
-                SortType.TYPE -> dao.getPropertyFilteredByType(_state.value.filterType)
-                SortType.PIECE -> dao.getPropertyFilteredByPiece(_state.value.minPiece, _state.value.maxPiece)
                 SortType.FILTER -> dao.getPropertyFiltered(
                     _state.value.minSurface, _state.value.maxSurface,
                     _state.value.minPrice, _state.value.maxPrice,
@@ -145,14 +139,14 @@ class PropertyViewModel(
                 _state.update {
                     it.copy(
                         minSurface = 0,
-                        maxSurface = 0,
+                        maxSurface = 10000,
                         minPrice = 0,
-                        maxPrice = 0,
-                        filterAgent = Agent.STEPHANE_PLAZA,
+                        maxPrice = 1000000000,
+                        filterAgent = null,
                         filterAddress = "",
-                        filterType = PropertyType.HOUSE,
+                        filterType = null,
                         minPiece = 0,
-                        maxPiece = 0,
+                        maxPiece = 1000,
                     )
                 }
             }
