@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
@@ -291,7 +292,11 @@ fun AddScreen(
                             TextField(
                                 value = state.price.toString(),
                                 onValueChange = {
-                                    onEvent(PropertyEvent.SetPrice(it.toInt()))
+                                    if (it.isEmpty()) {
+                                        onEvent(PropertyEvent.SetPrice(0))
+                                    } else if (it.isDigitsOnly()) {
+                                        onEvent(PropertyEvent.SetPrice(it.toInt()))
+                                    }
                                 },
                                 label = { Text(stringResource(id = R.string.price)) },
                                 keyboardOptions = KeyboardOptions(
@@ -311,7 +316,11 @@ fun AddScreen(
                             TextField(
                                 value = state.surface.toString(),
                                 onValueChange = {
-                                    onEvent(PropertyEvent.SetSurface(it.toInt()))
+                                    if (it.isEmpty()) {
+                                        onEvent(PropertyEvent.SetSurface(0))
+                                    } else if (it.isDigitsOnly()) {
+                                        onEvent(PropertyEvent.SetSurface(it.toInt()))
+                                    }
                                 },
                                 label = { Text(stringResource(id = R.string.surface)) },
                                 keyboardOptions = KeyboardOptions(
@@ -324,7 +333,11 @@ fun AddScreen(
                             TextField(
                                 value = state.pieceNumber.toString(),
                                 onValueChange = {
-                                    onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
+                                    if (it.isEmpty()) {
+                                        onEvent(PropertyEvent.SetPieceNumber(0))
+                                    } else if (it.isDigitsOnly()) {
+                                        onEvent(PropertyEvent.SetPieceNumber(it.toInt()))
+                                    }
                                 },
                                 label = { Text(stringResource(id = R.string.piece_number)) },
                                 keyboardOptions = KeyboardOptions(
