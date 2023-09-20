@@ -5,4 +5,5 @@ enum class SortType {
     SURFACE,
     PRICE,
     AGENT,
+    ADDRESS,
 }

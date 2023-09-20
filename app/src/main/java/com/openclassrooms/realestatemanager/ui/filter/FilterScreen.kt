@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,8 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
@@ -62,7 +66,7 @@ fun FilterScreen(
                 Button(
                     onClick = {
 //                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
-                        onEvent(PropertyEvent.SortProperty(SortType.AGENT))
+                        onEvent(PropertyEvent.SortProperty(SortType.ADDRESS))
                     },
                 ) {
                     Text("Apply")
@@ -72,10 +76,22 @@ fun FilterScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    CardFilterComparison(title = "Surface", min = state.minSurface, max = state.maxSurface, minEvent = { onEvent(PropertyEvent.FilterBySurfaceMin(it.toInt())) }, maxEvent = { onEvent(PropertyEvent.FilterBySurfaceMax(it.toInt())) })
+                    CardFilterComparison(
+                        title = "Surface",
+                        min = state.minSurface,
+                        max = state.maxSurface,
+                        minEvent = { onEvent(PropertyEvent.FilterBySurfaceMin(it.toInt())) },
+                        maxEvent = { onEvent(PropertyEvent.FilterBySurfaceMax(it.toInt())) },
+                    )
                 }
                 item {
-                    CardFilterComparison(title = "Price", min = state.minPrice, max = state.maxPrice, minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) }, maxEvent = { onEvent(PropertyEvent.FilterByPriceMax(it.toInt())) })
+                    CardFilterComparison(
+                        title = "Price",
+                        min = state.minPrice,
+                        max = state.maxPrice,
+                        minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) },
+                        maxEvent = { onEvent(PropertyEvent.FilterByPriceMax(it.toInt())) },
+                    )
                 }
                 item {
                     Card {
@@ -96,7 +112,11 @@ fun FilterScreen(
                                     readOnly = true,
                                     value = state.filterAgent.label,
                                     onValueChange = {},
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = agentExpanded) },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = agentExpanded,
+                                        )
+                                    },
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                                 )
@@ -116,6 +136,30 @@ fun FilterScreen(
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text("Address")
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                value = state.filterAddress,
+                                onValueChange = { onEvent(PropertyEvent.FilterByAddress(it)) },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Done,
+                                ),
+                            )
                         }
                     }
                 }

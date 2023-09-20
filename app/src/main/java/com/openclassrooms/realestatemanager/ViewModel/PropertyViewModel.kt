@@ -35,6 +35,7 @@ class PropertyViewModel(
                 SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface, _state.value.maxSurface)
                 SortType.PRICE -> dao.getPropertyFilteredByPrice(_state.value.minPrice, _state.value.maxPrice)
                 SortType.AGENT -> dao.getPropertyFilteredByAgent(_state.value.filterAgent)
+                SortType.ADDRESS -> dao.getPropertyFilteredByAddress(_state.value.filterAddress)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -97,6 +98,14 @@ class PropertyViewModel(
                 }
             }
 
+            is PropertyEvent.FilterByAddress -> {
+                _state.update {
+                    it.copy(
+                        filterAddress = event.address
+                    )
+                }
+            }
+
             PropertyEvent.ResetFilter -> {
                 _state.update {
                     it.copy(
@@ -105,6 +114,7 @@ class PropertyViewModel(
                         minPrice = 0,
                         maxPrice = 0,
                         filterAgent = Agent.STEPHANE_PLAZA,
+                        filterAddress = ""
                     )
                 }
             }

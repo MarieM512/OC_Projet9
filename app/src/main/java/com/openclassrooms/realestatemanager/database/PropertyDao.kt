@@ -26,4 +26,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE agent LIKE :agent")
     fun getPropertyFilteredByAgent(agent: Agent): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE address LIKE '%' || :address || '%'")
+    fun getPropertyFilteredByAddress(address: String): Flow<List<Property>>
 }

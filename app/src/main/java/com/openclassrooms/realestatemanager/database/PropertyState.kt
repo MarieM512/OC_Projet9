@@ -24,4 +24,5 @@ data class PropertyState(
     val minPrice: Int = 0,
     val maxPrice: Int = 0,
     val filterAgent: Agent = Agent.STEPHANE_PLAZA,
+    val filterAddress: String = "",
 )
