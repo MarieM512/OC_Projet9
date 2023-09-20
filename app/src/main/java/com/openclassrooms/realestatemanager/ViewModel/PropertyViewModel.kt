@@ -27,11 +27,20 @@ class PropertyViewModel(
     private val dao: PropertyDao,
 ) : ViewModel() {
 
-    private val _sortType = MutableStateFlow(SortType.ENTRY_DATE)
+    private val _sortType = MutableStateFlow(SortType.RESET)
     private val _properties = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.ENTRY_DATE -> dao.getPropertiesOrderedByEntryDate()
+                SortType.RESET -> dao.getAllProperties()
+                SortType.FILTER -> dao.getPropertyFiltered(
+                    _state.value.minSurface, _state.value.maxSurface,
+                    _state.value.minPrice, _state.value.maxPrice,
+                    _state.value.filterAgent,
+                    _state.value.filterAddress,
+                    _state.value.filterType,
+                    _state.value.minPiece,
+                    _state.value.maxPiece,
+                )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -51,6 +60,94 @@ class PropertyViewModel(
             PropertyEvent.DeleteAllProperty -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     dao.nukeTable()
+                }
+            }
+
+            is PropertyEvent.FilterBySurfaceMin -> {
+                _state.update {
+                    it.copy(
+                        minSurface = event.min,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterBySurfaceMax -> {
+                _state.update {
+                    it.copy(
+                        maxSurface = event.max,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPriceMin -> {
+                _state.update {
+                    it.copy(
+                        minPrice = event.min,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPriceMax -> {
+                _state.update {
+                    it.copy(
+                        maxPrice = event.max,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByAgent -> {
+                _state.update {
+                    it.copy(
+                        filterAgent = event.agent,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByAddress -> {
+                _state.update {
+                    it.copy(
+                        filterAddress = event.address,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByType -> {
+                _state.update {
+                    it.copy(
+                        filterType = event.type,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPieceMin -> {
+                _state.update {
+                    it.copy(
+                        minPiece = event.min,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPieceMax -> {
+                _state.update {
+                    it.copy(
+                        maxPiece = event.max,
+                    )
+                }
+            }
+
+            PropertyEvent.ResetFilter -> {
+                _state.update {
+                    it.copy(
+                        minSurface = 0,
+                        maxSurface = 10000,
+                        minPrice = 0,
+                        maxPrice = 1000000000,
+                        filterAgent = null,
+                        filterAddress = "",
+                        filterType = null,
+                        minPiece = 0,
+                        maxPiece = 1000,
+                    )
                 }
             }
 

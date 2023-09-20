@@ -30,7 +30,7 @@ class AddViewModel : ViewModel() {
     fun getAddressList() {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://api.geoapify.com/v1/geocode/autocomplete?text=${uiState.value.address}&limit=5&type=city&format=json&apiKey=342761ffcef34fe2b6ea8e0b468ddc4b")
+            .url("https://api.geoapify.com/v1/geocode/autocomplete?text=${uiState.value.address}&limit=10&format=json&apiKey=342761ffcef34fe2b6ea8e0b468ddc4b")
             .get()
             .addHeader("accept", "application/json")
             .build()
