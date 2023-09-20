@@ -45,15 +45,21 @@ fun FilterScreen(
                 Text("Filters")
                 Button(
                     onClick = {
-                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
+//                        onEvent(PropertyEvent.SortProperty(SortType.SURFACE))
+                        onEvent(PropertyEvent.SortProperty(SortType.PRICE))
                     },
                 ) {
                     Text("Apply")
                 }
             }
-            LazyColumn {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 item {
                     CardFilterComparison(title = "Surface", min = state.minSurface, max = state.maxSurface, minEvent = { onEvent(PropertyEvent.FilterBySurfaceMin(it.toInt())) }, maxEvent = { onEvent(PropertyEvent.FilterBySurfaceMax(it.toInt())) })
+                }
+                item {
+                    CardFilterComparison(title = "Price", min = state.minPrice, max = state.maxPrice, minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) }, maxEvent = { onEvent(PropertyEvent.FilterByPriceMax(it.toInt())) })
                 }
             }
         }

@@ -6,6 +6,8 @@ sealed interface PropertyEvent {
 
     data class FilterBySurfaceMin(val min: Int) : PropertyEvent
     data class FilterBySurfaceMax(val max: Int) : PropertyEvent
+    data class FilterByPriceMin(val min: Int) : PropertyEvent
+    data class FilterByPriceMax(val max: Int) : PropertyEvent
     object ResetFilter : PropertyEvent
 
     // TO DELETE

@@ -33,6 +33,7 @@ class PropertyViewModel(
             when (sortType) {
                 SortType.RESET -> dao.getAllProperties()
                 SortType.SURFACE -> dao.getPropertyFilteredBySurface(_state.value.minSurface, _state.value.maxSurface)
+                SortType.PRICE -> dao.getPropertyFilteredByPrice(_state.value.minPrice, _state.value.maxPrice)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -71,11 +72,29 @@ class PropertyViewModel(
                 }
             }
 
+            is PropertyEvent.FilterByPriceMin -> {
+                _state.update {
+                    it.copy(
+                        minPrice = event.min,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPriceMax -> {
+                _state.update {
+                    it.copy(
+                        maxPrice = event.max,
+                    )
+                }
+            }
+
             PropertyEvent.ResetFilter -> {
                 _state.update {
                     it.copy(
                         minSurface = 0,
                         maxSurface = 0,
+                        minPrice = 0,
+                        maxPrice = 0,
                     )
                 }
             }

@@ -20,4 +20,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE surface BETWEEN :min AND :max")
     fun getPropertyFilteredBySurface(min: Int, max: Int): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE price BETWEEN :min AND :max")
+    fun getPropertyFilteredByPrice(min: Int, max: Int): Flow<List<Property>>
 }

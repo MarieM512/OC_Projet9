@@ -21,4 +21,6 @@ data class PropertyState(
 
     val minSurface: Int = 0,
     val maxSurface: Int = 0,
+    val minPrice: Int = 0,
+    val maxPrice: Int = 0,
 )
