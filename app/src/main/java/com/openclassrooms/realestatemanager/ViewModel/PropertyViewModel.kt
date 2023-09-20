@@ -37,6 +37,7 @@ class PropertyViewModel(
                 SortType.AGENT -> dao.getPropertyFilteredByAgent(_state.value.filterAgent)
                 SortType.ADDRESS -> dao.getPropertyFilteredByAddress(_state.value.filterAddress)
                 SortType.TYPE -> dao.getPropertyFilteredByType(_state.value.filterType)
+                SortType.PIECE -> dao.getPropertyFilteredByPiece(_state.value.minPiece, _state.value.maxPiece)
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -115,6 +116,22 @@ class PropertyViewModel(
                 }
             }
 
+            is PropertyEvent.FilterByPieceMin -> {
+                _state.update {
+                    it.copy(
+                        minPiece = event.min
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPieceMax -> {
+                _state.update {
+                    it.copy(
+                        maxPiece = event.max
+                    )
+                }
+            }
+
             PropertyEvent.ResetFilter -> {
                 _state.update {
                     it.copy(
@@ -125,6 +142,8 @@ class PropertyViewModel(
                         filterAgent = Agent.STEPHANE_PLAZA,
                         filterAddress = "",
                         filterType = PropertyType.HOUSE,
+                        minPiece = 0,
+                        maxPiece = 0,
                     )
                 }
             }

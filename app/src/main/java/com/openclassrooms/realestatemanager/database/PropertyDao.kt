@@ -32,4 +32,7 @@ interface PropertyDao {
 
     @Query("SELECT * FROM property WHERE type LIKE :type")
     fun getPropertyFilteredByType(type: PropertyType): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE pieceNumber BETWEEN :min AND :max")
+    fun getPropertyFilteredByPiece(min: Int, max: Int): Flow<List<Property>>
 }

@@ -7,4 +7,5 @@ enum class SortType {
     AGENT,
     ADDRESS,
     TYPE,
+    PIECE,
 }
