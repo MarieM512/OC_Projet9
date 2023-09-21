@@ -175,6 +175,7 @@ fun AddScreen(
             selectedImageUris.clear()
             selectedImageTitles.clear()
             chip.clear()
+            addViewModel.reset()
             onEvent(PropertyEvent.Reset)
         }
     }
@@ -412,6 +413,7 @@ fun AddScreen(
                                             onEvent(PropertyEvent.SetLatitude(item.lat))
                                             onEvent(PropertyEvent.SetLongitude(item.lon))
                                             location.clear()
+                                            addViewModel.reset()
                                         }),
                                 )
                             }
