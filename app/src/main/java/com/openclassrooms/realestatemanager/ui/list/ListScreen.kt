@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
@@ -83,19 +84,19 @@ fun ListScreen(
                                     modifier = Modifier
                                         .weight(1f),
                                 ) {
-                                    Text(text = "Surface: ${property.surface} m²")
-                                    Text(text = "Piece: ${property.pieceNumber}")
+                                    Text(text = stringResource(id = R.string.detail_surface, property.surface))
+                                    Text(text = stringResource(id = R.string.detail_piece, property.pieceNumber))
                                 }
                                 Column(
                                     modifier = Modifier
                                         .weight(1f),
                                     horizontalAlignment = Alignment.End,
                                 ) {
-                                    Text(text = "${property.price} $")
+                                    Text(text = stringResource(id = R.string.detail_price, property.price))
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                                     ) {
-                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = stringResource(R.string.address))
                                         Text(text = property.address)
                                     }
                                 }

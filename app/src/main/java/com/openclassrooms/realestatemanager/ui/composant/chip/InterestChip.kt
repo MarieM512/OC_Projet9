@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.InterestPoint
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 
@@ -41,7 +43,7 @@ fun InterestChip(
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(id = R.string.done),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize),
                             )
                         }

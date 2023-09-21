@@ -227,13 +227,13 @@ fun AddScreen(
                                     AlertDialog(
                                         onDismissRequest = {},
                                         title = {
-                                            Text(text = "Image")
+                                            Text(stringResource(id = R.string.picture_title))
                                         },
                                         text = {
                                             TextField(
                                                 value = descriptionImage.value,
                                                 onValueChange = { descriptionImage.value = it },
-                                                label = { Text("Picture's title") },
+                                                label = { Text(stringResource(id = R.string.picture_description)) },
                                             )
                                         },
                                         confirmButton = {
@@ -255,7 +255,7 @@ fun AddScreen(
                                                     openDialogPicture.value = false
                                                 },
                                             ) {
-                                                Text("Confirm")
+                                                Text(stringResource(id = R.string.button_confirm))
                                             }
                                         },
                                         dismissButton = {
@@ -264,7 +264,7 @@ fun AddScreen(
                                                     openDialogPicture.value = false
                                                 },
                                             ) {
-                                                Text("Cancel")
+                                                Text(stringResource(id = R.string.button_cancel))
                                             }
                                         },
                                     )
@@ -532,10 +532,10 @@ fun AddScreen(
                                 )
                             }
                             if (openDialogMissing.value) {
-                                DialogInformation("Missing information", "Please be sure to fill all the information with at least one picture.", openDialogMissing)
+                                DialogInformation(stringResource(id = R.string.missing_title), stringResource(id = R.string.missing_description), openDialogMissing)
                             }
                             if (openDialogSuccess.value) {
-                                DialogInformation("Success", "You have successfully add your property.", openDialogSuccess)
+                                DialogInformation(stringResource(id = R.string.success_title), stringResource(id = R.string.success_description), openDialogSuccess)
                             }
                         }
                     }

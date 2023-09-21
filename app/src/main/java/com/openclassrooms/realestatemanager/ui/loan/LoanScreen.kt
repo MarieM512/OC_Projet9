@@ -122,7 +122,7 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                     value = loanUiState.rate,
                     onValueChange = { loanViewModel.updateRate(it) },
                     label = { Text(stringResource(id = R.string.rate)) },
-                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = "contribution") },
+                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                     singleLine = true,
                     modifier = Modifier
@@ -133,7 +133,7 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                     value = loanUiState.duration,
                     onValueChange = { loanViewModel.updateDuration(it) },
                     label = { Text(stringResource(id = R.string.duration)) },
-                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = "contribution") },
+                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     singleLine = true,
                     modifier = Modifier

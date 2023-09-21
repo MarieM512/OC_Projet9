@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.gms.location.LocationServices
@@ -22,6 +23,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.alert.DialogInformation
@@ -32,7 +34,7 @@ import com.openclassrooms.realestatemanager.utils.Permissions
 fun MapScreen(
     state: PropertyState,
     navController: NavController,
-    mapViewModel: MapViewModel = viewModel()
+    mapViewModel: MapViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val openDialogLocation = remember { mutableStateOf(false) }
@@ -83,7 +85,7 @@ fun MapScreen(
             }
         }
         if (openDialogLocation.value) {
-            DialogInformation("Permission denied", "Please go to your settings to allow location permission in order to be able to use the map.", openMap)
+            DialogInformation(stringResource(R.string.permission_title), stringResource(id = R.string.location_permission_description), openMap)
         }
     }
 }

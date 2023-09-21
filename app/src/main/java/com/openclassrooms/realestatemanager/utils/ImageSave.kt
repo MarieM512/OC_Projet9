@@ -35,7 +35,7 @@ object ImageSave {
             f.flush()
             f.close()
         } catch (e: IOException) {
-            println("failed")
+            e.printStackTrace()
         }
         return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
     }

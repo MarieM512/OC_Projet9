@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Property
@@ -53,8 +54,8 @@ fun ListTabletScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        Icon(painterResource(id = R.drawable.ic_house), contentDescription = "home")
-                        Text("Select a property to show more details about it")
+                        Icon(painterResource(id = R.drawable.ic_house), contentDescription = stringResource(R.string.home))
+                        Text(stringResource(R.string.select_property))
                     }
                 } else {
                     property.value?.let { DetailTabletScreen(it, navController) }

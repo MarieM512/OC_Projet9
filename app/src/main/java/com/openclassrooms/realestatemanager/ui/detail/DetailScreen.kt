@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
@@ -87,9 +88,9 @@ fun DetailScreen(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text("Entry: ${property.entryDate}")
+                            Text(stringResource(id = R.string.detail_entry, property.entryDate))
                             if (property.soldDate.isNotEmpty()) {
-                                Text("Sold: ${property.soldDate}")
+                                Text(stringResource(id = R.string.detail_sold, property.soldDate))
                             }
                         }
                     }
@@ -102,8 +103,8 @@ fun DetailScreen(
                                 modifier = Modifier
                                     .weight(1f),
                             ) {
-                                Text("Surface: ${property.surface} m²")
-                                Text("Piece: ${property.pieceNumber}")
+                                Text(stringResource(id = R.string.detail_surface, property.surface))
+                                Text(stringResource(id = R.string.detail_piece, property.pieceNumber))
                             }
                             Column(
                                 modifier = Modifier
@@ -144,7 +145,7 @@ fun DetailScreen(
                                     .weight(1f),
                             ) {
                                 Row {
-                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = stringResource(R.string.address))
                                     Text(property.address)
                                 }
                             }

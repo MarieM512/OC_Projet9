@@ -22,9 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
@@ -59,15 +61,15 @@ fun FilterScreen(
                         onEvent(PropertyEvent.ResetFilter)
                     },
                 ) {
-                    Text("Reset")
+                    Text(stringResource(id = R.string.button_reset))
                 }
-                Text("Filters")
+                Text(stringResource(id = R.string.filter))
                 Button(
                     onClick = {
                         onEvent(PropertyEvent.SortProperty(SortType.FILTER))
                     },
                 ) {
-                    Text("Apply")
+                    Text(stringResource(id = R.string.button_apply))
                 }
             }
             LazyColumn(
@@ -75,7 +77,7 @@ fun FilterScreen(
             ) {
                 item {
                     CardFilterComparison(
-                        title = "Price",
+                        title = stringResource(id = R.string.price),
                         min = state.minPrice,
                         max = state.maxPrice,
                         minEvent = { onEvent(PropertyEvent.FilterByPriceMin(it.toInt())) },
@@ -84,7 +86,7 @@ fun FilterScreen(
                 }
                 item {
                     CardFilterComparison(
-                        title = "Surface",
+                        title = stringResource(id = R.string.surface),
                         min = state.minSurface,
                         max = state.maxSurface,
                         minEvent = { onEvent(PropertyEvent.FilterBySurfaceMin(it.toInt())) },
@@ -93,7 +95,7 @@ fun FilterScreen(
                 }
                 item {
                     CardFilterComparison(
-                        title = "Piece",
+                        title = stringResource(id = R.string.piece),
                         min = state.minPiece,
                         max = state.maxPiece,
                         minEvent = { onEvent(PropertyEvent.FilterByPieceMin(it.toInt())) },
@@ -106,7 +108,7 @@ fun FilterScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text("Type")
+                            Text(stringResource(id = R.string.type))
                             ExposedDropdownMenuBox(
                                 expanded = typeExpanded,
                                 onExpandedChange = {
@@ -157,7 +159,7 @@ fun FilterScreen(
                                 .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text("Address")
+                            Text(stringResource(id = R.string.address))
                             TextField(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -177,7 +179,7 @@ fun FilterScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text("Agent")
+                            Text(stringResource(id = R.string.agent))
                             ExposedDropdownMenuBox(
                                 expanded = agentExpanded,
                                 onExpandedChange = { agentExpanded = !agentExpanded },
