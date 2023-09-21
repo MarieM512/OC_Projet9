@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.add
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -46,9 +48,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.Agent
 import com.openclassrooms.realestatemanager.database.InterestPoint
@@ -60,7 +64,6 @@ import com.openclassrooms.realestatemanager.database.Status
 import com.openclassrooms.realestatemanager.model.Address
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.alert.DialogInformation
-import com.openclassrooms.realestatemanager.ui.composant.alert.DialogPicture
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 import com.openclassrooms.realestatemanager.ui.composant.button.Pictures
 import com.openclassrooms.realestatemanager.ui.composant.chip.InterestChip
@@ -221,14 +224,49 @@ fun AddScreen(
                                 )
                                 if (openDialogPicture.value) {
                                     descriptionImage.value = ""
-                                    DialogPicture(
-                                        context,
-                                        descriptionImage,
-                                        takePicture,
-                                        uri,
-                                        cameraLauncher,
-                                        multiplePhotoPickerLauncher,
-                                        openDialogPicture,
+                                    AlertDialog(
+                                        onDismissRequest = {},
+                                        title = {
+                                            Text(text = "Image")
+                                        },
+                                        text = {
+                                            TextField(
+                                                value = descriptionImage.value,
+                                                onValueChange = { descriptionImage.value = it },
+                                                label = { Text("Picture's title") },
+                                            )
+                                        },
+                                        confirmButton = {
+                                            Button(
+                                                onClick = {
+                                                    if (descriptionImage.value.isNotEmpty()) {
+                                                        if (takePicture.value) {
+                                                            uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", ImageSave.createImageFile(context))
+                                                            cameraLauncher.launch(uri)
+                                                            takePicture.value = false
+                                                        } else {
+                                                            multiplePhotoPickerLauncher.launch(
+                                                                PickVisualMediaRequest(
+                                                                    ActivityResultContracts.PickVisualMedia.ImageOnly,
+                                                                ),
+                                                            )
+                                                        }
+                                                    }
+                                                    openDialogPicture.value = false
+                                                },
+                                            ) {
+                                                Text("Confirm")
+                                            }
+                                        },
+                                        dismissButton = {
+                                            Button(
+                                                onClick = {
+                                                    openDialogPicture.value = false
+                                                },
+                                            ) {
+                                                Text("Cancel")
+                                            }
+                                        },
                                     )
                                 }
                             }
