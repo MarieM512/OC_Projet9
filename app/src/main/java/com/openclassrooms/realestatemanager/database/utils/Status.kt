@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.database.utils
 
 enum class Status(val label: String) {
     AVAILABLE("Available"),

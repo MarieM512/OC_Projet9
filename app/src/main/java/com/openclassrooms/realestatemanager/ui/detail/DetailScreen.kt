@@ -34,8 +34,8 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarDetail
@@ -45,6 +45,7 @@ import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarDetail
 fun DetailScreen(
     property: Property,
     navController: NavController,
+    nearInterestPointList: List<String>,
 ) {
     val context = LocalContext.current
 
@@ -117,10 +118,10 @@ fun DetailScreen(
                         }
                         LazyRow() {
                             item {
-                                property.nearInterestPoint.forEach { interest ->
+                                nearInterestPointList.forEach { interest ->
                                     FilterChip(
                                         onClick = {},
-                                        label = { Text(interest.label) },
+                                        label = { Text(interest) },
                                         selected = true,
                                         modifier = Modifier
                                             .padding(horizontal = 4.dp),

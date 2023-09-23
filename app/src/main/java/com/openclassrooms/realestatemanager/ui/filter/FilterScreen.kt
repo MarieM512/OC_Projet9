@@ -27,10 +27,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Agent
+import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.card.CardFilterComparison

@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.database.utils
 
 enum class Agent(val label: String) {
     STEPHANE_PLAZA("Stephane Plaza"),

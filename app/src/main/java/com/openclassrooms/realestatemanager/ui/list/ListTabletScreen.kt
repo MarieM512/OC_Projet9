@@ -18,7 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
+import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.detail.DetailTabletScreen
@@ -29,6 +30,7 @@ fun ListTabletScreen(
     state: PropertyState,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
+    viewModel: PropertyViewModel,
 ) {
     val property: MutableState<Property?> = remember { mutableStateOf(null) }
     AppTheme {
@@ -58,7 +60,7 @@ fun ListTabletScreen(
                         Text(stringResource(R.string.select_property))
                     }
                 } else {
-                    property.value?.let { DetailTabletScreen(it, navController) }
+                    property.value?.let { DetailTabletScreen(it, navController, viewModel.getNearInterestPoint(it.id)) }
                 }
             }
         }

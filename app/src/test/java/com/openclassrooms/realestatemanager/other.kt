@@ -1,12 +1,7 @@
 package com.openclassrooms.realestatemanager
 
-import app.cash.turbine.test
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.database.PropertyDao
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test

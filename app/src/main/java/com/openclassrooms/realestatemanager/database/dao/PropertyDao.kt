@@ -1,15 +1,18 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertyDao {
 
     @Upsert
-    suspend fun upsertProperty(property: Property)
+    suspend fun upsertProperty(property: Property): Long
 
     @Query("SELECT * FROM property")
     fun getAllProperties(): Flow<List<Property>>

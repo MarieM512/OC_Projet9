@@ -2,26 +2,19 @@ package com.openclassrooms.realestatemanager
 
 import app.cash.turbine.test
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.InterestPoint
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.PropertyDao
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.PropertyType
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,6 +64,25 @@ class test {
     }
 
     @Test
+    fun dfkljs() = runTest {
+        val viewModel = PropertyViewModel(propertyDao)
+
+        val values = mutableListOf<Any>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect()
+        }
+
+        viewModel.state.test {
+            propertyDao.getAllProperties()
+            viewModel.onEvent(PropertyEvent.SetAddress("Nantes"))
+            viewModel.onEvent(PropertyEvent.SaveProperty(-1))
+            assertEquals("Nantes", awaitItem())
+        }
+
+
+    }
+
+    @Test
     fun `èhfljksf`() = runTest {
         val property = Property(
             type = PropertyType.HOUSE,
@@ -83,7 +95,7 @@ class test {
             address = "La Tancrere, La Varenne, Orée d'Anjou, PDL, France",
             latitude = 47.3099966,
             longitude = -1.3126905,
-            nearInterestPoint = listOf(InterestPoint.SCHOOL),
+//            nearInterestPoint = listOf(InterestPoint.SCHOOL),
             status = Status.AVAILABLE,
             entryDate = "18/06/2022",
             soldDate = "",

@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.InterestPoint
+import com.openclassrooms.realestatemanager.database.utils.InterestPoint
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterestChip(
-    chip: SnapshotStateList<InterestPoint>,
+    chip: SnapshotStateList<String>,
     onEvent: (PropertyEvent) -> Unit,
 ) {
     LazyRow {
@@ -30,16 +30,16 @@ fun InterestChip(
             InterestPoint.values().forEach { interest ->
                 FilterChip(
                     onClick = {
-                        if (chip.contains(interest)) {
-                            chip.remove(interest)
+                        if (chip.contains(interest.label)) {
+                            chip.remove(interest.label)
                         } else {
-                            chip.add(interest)
+                            chip.add(interest.label)
                         }
-                        onEvent(PropertyEvent.SetNearInterestPoint(interest))
+                        onEvent(PropertyEvent.SetNearInterestPoint(interest.label))
                     },
                     label = { Text(interest.label) },
-                    selected = chip.contains(interest),
-                    leadingIcon = if (chip.contains(interest)) {
+                    selected = chip.contains(interest.label),
+                    leadingIcon = if (chip.contains(interest.label)) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,

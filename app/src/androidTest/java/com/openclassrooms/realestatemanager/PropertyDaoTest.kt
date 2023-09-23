@@ -2,13 +2,13 @@ package com.openclassrooms.realestatemanager
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.InterestPoint
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.PropertyDao
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.InterestPoint
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
-import com.openclassrooms.realestatemanager.database.PropertyType
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.utils.Converters
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -52,7 +52,7 @@ class PropertyDaoTest {
             .allowMainThreadQueries()
             .addTypeConverter(Converters())
             .build()
-        propertyDao = propertyDb.dao
+        propertyDao = propertyDb.propertyDao
     }
 
     @Test

@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
             PropertyDatabase::class.java,
             "properties.db",
         )
+            .allowMainThreadQueries()
             .addTypeConverter(Converters())
             .build()
     }
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(db.dao) as T
+                    return PropertyViewModel(db.propertyDao, db.nearDao) as T
                 }
             }
         },
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
             val windowSizeClass = calculateWindowSizeClass(activity = this)
+//            db.clearAllTables()
             Scaffold(
                 bottomBar = {
                     BottomBar(navController = navController)

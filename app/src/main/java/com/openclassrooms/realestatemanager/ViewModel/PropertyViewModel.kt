@@ -3,16 +3,16 @@ package com.openclassrooms.realestatemanager.ViewModel
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.InterestPoint
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.PropertyDao
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
+import com.openclassrooms.realestatemanager.database.dao.NearInterestPointDao
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
-import com.openclassrooms.realestatemanager.database.Status
-import kotlinx.coroutines.Dispatchers
+import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -24,15 +24,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class PropertyViewModel(
-    private val dao: PropertyDao,
+    private val propertyDao: PropertyDao,
+    private val nearDao: NearInterestPointDao,
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.RESET)
     private val _properties = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.RESET -> dao.getAllProperties()
-                SortType.FILTER -> dao.getPropertyFiltered(
+                SortType.RESET -> propertyDao.getAllProperties()
+                SortType.FILTER -> propertyDao.getPropertyFiltered(
                     _state.value.minSurface, _state.value.maxSurface,
                     _state.value.minPrice, _state.value.maxPrice,
                     _state.value.filterAgent,
@@ -56,7 +57,6 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
-
             is PropertyEvent.FilterBySurfaceMin -> {
                 _state.update {
                     it.copy(
@@ -199,7 +199,6 @@ class PropertyViewModel(
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
-                        nearInterestPoint = nearInterestPoint,
                         status = status,
                         entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
                         soldDate = soldDate,
@@ -217,7 +216,6 @@ class PropertyViewModel(
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
-                        nearInterestPoint = nearInterestPoint,
                         status = status,
                         entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
                         soldDate = soldDate,
@@ -225,8 +223,29 @@ class PropertyViewModel(
                     )
                 }
                 viewModelScope.launch {
-                    dao.upsertProperty(property)
+                    val propertyId = propertyDao.upsertProperty(property).toInt()
+                    if (propertyId != -1) {
+                        nearInterestPoint.forEach { nearInterestPoint ->
+                            val near = NearInterestPoint(propertyId = propertyId, nearInterestPoint = nearInterestPoint)
+                            nearDao.insertNearInterestPoint(near)
+                        }
+                    } else {
+                        val nearDb = getNearInterestPoint(id)
+                        nearInterestPoint.forEach { nearInterestPoint ->
+                            if (!nearDb.contains(nearInterestPoint)) {
+                                val near = NearInterestPoint(propertyId = id, nearInterestPoint = nearInterestPoint)
+                                nearDao.insertNearInterestPoint(near)
+                                println("add")
+                            }
+                        }
+                        nearDb.forEach { interestPoint ->
+                            if (!nearInterestPoint.contains(interestPoint)) {
+                                nearDao.deleteNearInterestPoint(id, interestPoint)
+                            }
+                        }
+                    }
                 }
+
                 _state.update {
                     it.copy(
                         type = PropertyType.HOUSE,
@@ -290,7 +309,7 @@ class PropertyViewModel(
 
             is PropertyEvent.SetNearInterestPoint -> {
                 _state.update {
-                    val near: MutableList<InterestPoint> = it.nearInterestPoint
+                    val near: MutableList<String> = it.nearInterestPoint
                     if (near.contains(event.nearInterestPoint)) {
                         near.remove(event.nearInterestPoint)
                     } else {
@@ -376,5 +395,9 @@ class PropertyViewModel(
                 _sortType.value = event.sortType
             }
         }
+    }
+
+    fun getNearInterestPoint(id: Int): List<String> {
+        return nearDao.getNearInterestPointFromPropertyId(id)
     }
 }

@@ -29,9 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 

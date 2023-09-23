@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Status
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

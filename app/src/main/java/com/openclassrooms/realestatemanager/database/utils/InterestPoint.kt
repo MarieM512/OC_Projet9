@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.database.utils
 
 enum class InterestPoint(val label: String) {
     SCHOOL("School"),

@@ -1,9 +1,12 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.database.entity
 
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
 
 @Entity
 data class Property(
@@ -19,7 +22,6 @@ data class Property(
     val address: String,
     val latitude: Double,
     val longitude: Double,
-    val nearInterestPoint: List<InterestPoint>,
     val status: Status,
     val entryDate: String,
     val soldDate: String,

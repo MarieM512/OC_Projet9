@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.database.entity.Property
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
