@@ -34,6 +34,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
@@ -46,6 +47,7 @@ fun DetailScreen(
     property: Property,
     navController: NavController,
     nearInterestPointList: List<String>,
+    viewModel: PropertyViewModel,
 ) {
     val context = LocalContext.current
 
@@ -67,7 +69,7 @@ fun DetailScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
-                        Carousel(context = context, property = property)
+                        Carousel(context = context, property = property, viewModel = viewModel)
                     }
                     item {
                         Column(

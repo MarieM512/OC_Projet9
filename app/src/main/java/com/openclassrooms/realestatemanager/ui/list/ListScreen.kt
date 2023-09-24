@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.utils.Status
@@ -41,6 +42,7 @@ fun ListScreen(
     state: PropertyState,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
+    viewModel: PropertyViewModel,
 ): Property? {
     val context = LocalContext.current
     val propertyClick: MutableState<Property?> = remember { mutableStateOf(null) }
@@ -71,7 +73,7 @@ fun ListScreen(
                         modifier = Modifier
                             .padding(18.dp),
                     ) {
-                        Carousel(context, property)
+                        Carousel(context, property, viewModel)
                         Column(
                             modifier = Modifier
                                 .padding(vertical = 8.dp)

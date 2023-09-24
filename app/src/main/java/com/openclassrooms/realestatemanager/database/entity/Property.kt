@@ -17,8 +17,6 @@ data class Property(
     val surface: Int,
     val pieceNumber: Int,
     val description: String,
-    val uriPicture: List<String>,
-    val titlePicture: List<String>,
     val address: String,
     val latitude: Double,
     val longitude: Double,

@@ -44,7 +44,7 @@ fun NavigationGraph(
         composable(BottomNavItem.List.route) {
             when (windowSizeClass.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-                    ListScreen(state, navController, windowSizeClass)
+                    ListScreen(state, navController, windowSizeClass, viewModel)
                 } else -> {
                     ListTabletScreen(state, navController, windowSizeClass, viewModel)
                 }
@@ -62,7 +62,7 @@ fun NavigationGraph(
         composable("property/{propertyId}") { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                DetailScreen(property = property, navController = navController, nearInterestPointList = viewModel.getNearInterestPoint(property.id))
+                DetailScreen(property = property, navController = navController, nearInterestPointList = viewModel.getNearInterestPoint(property.id), viewModel = viewModel)
             }
         }
         composable("edit/{propertyId}") { navBackStackEntry ->

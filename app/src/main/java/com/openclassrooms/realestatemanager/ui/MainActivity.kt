@@ -20,7 +20,6 @@ import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomBar
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.NavigationGraph
-import com.openclassrooms.realestatemanager.utils.Converters
 
 class MainActivity : ComponentActivity() {
 
@@ -31,7 +30,6 @@ class MainActivity : ComponentActivity() {
             "properties.db",
         )
             .allowMainThreadQueries()
-            .addTypeConverter(Converters())
             .build()
     }
 
@@ -39,7 +37,7 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(db.propertyDao, db.nearDao) as T
+                    return PropertyViewModel(db.propertyDao, db.nearDao, db.pictureDao) as T
                 }
             }
         },
@@ -52,7 +50,6 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
             val windowSizeClass = calculateWindowSizeClass(activity = this)
-//            db.clearAllTables()
             Scaffold(
                 bottomBar = {
                     BottomBar(navController = navController)

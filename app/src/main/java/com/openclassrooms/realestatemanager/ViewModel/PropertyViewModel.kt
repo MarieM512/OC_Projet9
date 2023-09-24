@@ -12,6 +12,9 @@ import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
+import com.openclassrooms.realestatemanager.database.dao.PictureDao
+import com.openclassrooms.realestatemanager.database.entity.Picture
+import com.openclassrooms.realestatemanager.database.utils.PictureTuple
 import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,6 +29,7 @@ import java.util.Date
 class PropertyViewModel(
     private val propertyDao: PropertyDao,
     private val nearDao: NearInterestPointDao,
+    private val pictureDao: PictureDao,
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.RESET)
@@ -194,8 +198,6 @@ class PropertyViewModel(
                         surface = surface,
                         pieceNumber = pieceNumber,
                         description = description,
-                        uriPicture = uriPicture,
-                        titlePicture = titlePicture,
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
@@ -211,8 +213,6 @@ class PropertyViewModel(
                         surface = surface,
                         pieceNumber = pieceNumber,
                         description = description,
-                        uriPicture = uriPicture,
-                        titlePicture = titlePicture,
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
@@ -229,18 +229,34 @@ class PropertyViewModel(
                             val near = NearInterestPoint(propertyId = propertyId, nearInterestPoint = nearInterestPoint)
                             nearDao.insertNearInterestPoint(near)
                         }
+                        uriPicture.zip(titlePicture).forEach { currentPicture ->
+                            val picture = Picture(propertyId = propertyId, uri = currentPicture.first, title = currentPicture.second)
+                            pictureDao.insertPicture(picture)
+                        }
                     } else {
                         val nearDb = getNearInterestPoint(id)
                         nearInterestPoint.forEach { nearInterestPoint ->
                             if (!nearDb.contains(nearInterestPoint)) {
                                 val near = NearInterestPoint(propertyId = id, nearInterestPoint = nearInterestPoint)
                                 nearDao.insertNearInterestPoint(near)
-                                println("add")
                             }
                         }
                         nearDb.forEach { interestPoint ->
                             if (!nearInterestPoint.contains(interestPoint)) {
                                 nearDao.deleteNearInterestPoint(id, interestPoint)
+                            }
+                        }
+                        val pictureDb = getPicture(id)
+                        uriPicture.zip(titlePicture).forEach { currentPicture ->
+                            val pictureTuple = PictureTuple(uri = currentPicture.first, title = currentPicture.second)
+                            if (!pictureDb.contains(pictureTuple)) {
+                                val picture = Picture(propertyId = id, uri = currentPicture.first, title = currentPicture.second)
+                                pictureDao.insertPicture(picture)
+                            }
+                        }
+                        pictureDb.forEach { currentPicture ->
+                            if (!(uriPicture.contains(currentPicture.uri) && titlePicture.contains(currentPicture.title))) {
+                                pictureDao.deletePicture(id, currentPicture.uri, currentPicture.title)
                             }
                         }
                     }
@@ -399,5 +415,9 @@ class PropertyViewModel(
 
     fun getNearInterestPoint(id: Int): List<String> {
         return nearDao.getNearInterestPointFromPropertyId(id)
+    }
+
+    fun getPicture(id: Int): List<PictureTuple> {
+        return pictureDao.getPictureFromPropertyId(id)
     }
 }

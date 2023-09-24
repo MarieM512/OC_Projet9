@@ -153,19 +153,17 @@ fun AddScreen(
 
     LaunchedEffect(Unit) {
         if (property != null) {
-            property.uriPicture.let { selectedImageUris.addAll(it) }
-            property.titlePicture.let { selectedImageTitles.addAll(it) }
+            viewModel.getPicture(property.id).forEach { currentPicture ->
+                selectedImageUris.add(currentPicture.uri)
+                selectedImageTitles.add(currentPicture.title)
+                viewModel.onEvent(PropertyEvent.SetUriPicture(currentPicture.uri))
+                viewModel.onEvent(PropertyEvent.SetTitlePicture(currentPicture.title))
+            }
             address = property.address
             viewModel.getNearInterestPoint(property.id).forEach { interestPoint ->
                 viewModel.onEvent(PropertyEvent.SetNearInterestPoint(interestPoint))
             }
             chip.addAll(viewModel.getNearInterestPoint(property.id))
-
-            property.uriPicture.zip(property.titlePicture).forEach { picture ->
-                viewModel.onEvent(PropertyEvent.SetUriPicture(picture.first))
-                viewModel.onEvent(PropertyEvent.SetTitlePicture(picture.second))
-            }
-
             viewModel.onEvent(PropertyEvent.SetType(property.type))
             viewModel.onEvent(PropertyEvent.SetPrice(property.price))
             viewModel.onEvent(PropertyEvent.SetSurface(property.surface))
