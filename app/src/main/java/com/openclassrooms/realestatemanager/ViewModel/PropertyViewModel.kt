@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.SortType
-import com.openclassrooms.realestatemanager.database.dao.NearInterestPointDao
 import com.openclassrooms.realestatemanager.database.dao.PictureDao
 import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
 import com.openclassrooms.realestatemanager.database.entity.Picture
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
+import com.openclassrooms.realestatemanager.database.repository.PictureRepository
 import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PictureTuple
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
@@ -30,7 +30,7 @@ import java.util.Date
 class PropertyViewModel(
     private val propertyDao: PropertyDao,
     private val nearRepo: NearInterestPointRepository,
-    private val pictureDao: PictureDao,
+    private val pictureRepo: PictureRepository,
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.RESET)
@@ -291,7 +291,7 @@ class PropertyViewModel(
                         }
                         uriPicture.zip(titlePicture).forEach { currentPicture ->
                             val picture = Picture(propertyId = propertyId, uri = currentPicture.first, title = currentPicture.second)
-                            pictureDao.insertPicture(picture)
+                            pictureRepo.insertPicture(picture)
                         }
                     } else {
                         val nearDb = getNearInterestPoint(id)
@@ -311,12 +311,12 @@ class PropertyViewModel(
                             val pictureTuple = PictureTuple(uri = currentPicture.first, title = currentPicture.second)
                             if (!pictureDb.contains(pictureTuple)) {
                                 val picture = Picture(propertyId = id, uri = currentPicture.first, title = currentPicture.second)
-                                pictureDao.insertPicture(picture)
+                                pictureRepo.insertPicture(picture)
                             }
                         }
                         pictureDb.forEach { currentPicture ->
                             if (!(uriPicture.contains(currentPicture.uri) && titlePicture.contains(currentPicture.title))) {
-                                pictureDao.deletePicture(id, currentPicture.uri, currentPicture.title)
+                                pictureRepo.deletePicture(id, currentPicture.uri, currentPicture.title)
                             }
                         }
                     }
@@ -478,6 +478,6 @@ class PropertyViewModel(
     }
 
     fun getPicture(id: Int): List<PictureTuple> {
-        return pictureDao.getPictureFromPropertyId(id)
+        return pictureRepo.getPictureFromPropertyId(id)
     }
 }

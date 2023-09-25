@@ -19,6 +19,7 @@ import androidx.room.Room
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
 import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
+import com.openclassrooms.realestatemanager.database.repository.PictureRepository
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomBar
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.NavigationGraph
 
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(db.propertyDao, NearInterestPointRepository(db.nearDao), db.pictureDao) as T
+                    return PropertyViewModel(db.propertyDao, NearInterestPointRepository(db.nearDao), PictureRepository(db.pictureDao)) as T
                 }
             }
         },
