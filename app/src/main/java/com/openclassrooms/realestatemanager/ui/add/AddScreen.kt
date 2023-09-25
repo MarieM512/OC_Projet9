@@ -484,7 +484,7 @@ fun AddScreen(
                                         viewModel.onEvent(PropertyEvent.SetStatus(Status.SOLD))
                                         viewModel.onEvent(
                                             PropertyEvent.SetSoldDate(
-                                                SimpleDateFormat("dd/MM/yyyy").format(
+                                                SimpleDateFormat("yyyy-MM-dd").format(
                                                     Date(),
                                                 ),
                                             ),

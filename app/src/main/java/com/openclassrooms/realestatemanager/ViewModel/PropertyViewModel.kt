@@ -47,6 +47,7 @@ class PropertyViewModel(
                     _state.value.maxPiece,
                     _state.value.filterPicture,
                     _state.value.filterEntryDate?.query,
+                    _state.value.filterSoldDate?.query,
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -63,6 +64,14 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
+            is PropertyEvent.FilterBySoldDate -> {
+                _state.update {
+                    it.copy(
+                        filterSoldDate = event.date,
+                    )
+                }
+            }
+
             is PropertyEvent.FilterByEntryDate -> {
                 _state.update {
                     it.copy(
@@ -165,6 +174,7 @@ class PropertyViewModel(
                         maxPiece = 1000,
                         filterPicture = 1,
                         filterEntryDate = null,
+                        filterSoldDate = null,
                     )
                 }
             }

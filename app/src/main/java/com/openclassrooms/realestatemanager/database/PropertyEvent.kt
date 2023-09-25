@@ -21,6 +21,7 @@ sealed interface PropertyEvent {
     data class FilterByPieceMax(val max: Int) : PropertyEvent
     data class FilterByPicture(val number: Int) : PropertyEvent
     data class FilterByEntryDate(val date: PropertyDate) : PropertyEvent
+    data class FilterBySoldDate(val date: PropertyDate) : PropertyEvent
     object ResetFilter : PropertyEvent
 
     data class SetType(val type: PropertyType) : PropertyEvent

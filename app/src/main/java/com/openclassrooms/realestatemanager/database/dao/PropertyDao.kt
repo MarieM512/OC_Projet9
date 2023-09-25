@@ -6,6 +6,7 @@ import androidx.room.Upsert
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -29,7 +30,8 @@ interface PropertyDao {
             "AND (:type IS NULL OR property.type LIKE :type) " +
             "AND property.pieceNumber BETWEEN :minPiece AND :maxPiece " +
             "GROUP BY property.id HAVING COUNT(picture.propertyId) >= :picture " +
-            "AND (:entryDate IS NULL OR property.entryDate BETWEEN DATE('now', :entryDate) AND DATE('now'))",
+            "AND (:entryDate IS NULL OR property.entryDate BETWEEN DATE('now', :entryDate) AND DATE('now')) " +
+            "AND (:soldDate IS NULL OR property.soldDate BETWEEN DATE('now', :soldDate) AND DATE('now'))",
     )
-    fun getPropertyFiltered(minSurface: Int, maxSurface: Int, minPrice: Int, maxPrice: Int, agent: Agent?, address: String, type: PropertyType?, minPiece: Int, maxPiece: Int, picture: Int, entryDate: String?): Flow<List<Property>>
+    fun getPropertyFiltered(minSurface: Int, maxSurface: Int, minPrice: Int, maxPrice: Int, agent: Agent?, address: String, type: PropertyType?, minPiece: Int, maxPiece: Int, picture: Int, entryDate: String?, soldDate: String?): Flow<List<Property>>
 }

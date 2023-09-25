@@ -37,7 +37,6 @@ import com.openclassrooms.realestatemanager.database.SortType
 import com.openclassrooms.realestatemanager.database.utils.PropertyDate
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.card.CardFilterComparison
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +47,7 @@ fun FilterScreen(
     var agentExpanded by remember { mutableStateOf(false) }
     var typeExpanded by remember { mutableStateOf(false) }
     var entryDateExpanded by remember { mutableStateOf(false) }
+    var soldDateExpanded by remember { mutableStateOf(false) }
 
     AppTheme {
         Column(
@@ -315,6 +315,63 @@ fun FilterScreen(
                                                 onClick = {
                                                     onEvent(PropertyEvent.FilterByEntryDate(date))
                                                     entryDateExpanded = false
+                                                },
+                                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item {
+                    Card {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(stringResource(id = R.string.sold_date))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(id = R.string.since),
+                                    textAlign = TextAlign.Center,
+                                )
+                                ExposedDropdownMenuBox(
+                                    expanded = soldDateExpanded,
+                                    onExpandedChange = {
+                                        soldDateExpanded = !soldDateExpanded
+                                    },
+                                ) {
+                                    TextField(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .menuAnchor(),
+                                        readOnly = true,
+                                        value = state.filterSoldDate?.label ?: "",
+                                        onValueChange = {},
+                                        trailingIcon = {
+                                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                                expanded = soldDateExpanded,
+                                            )
+                                        },
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = soldDateExpanded,
+                                        onDismissRequest = { soldDateExpanded = false },
+                                    ) {
+                                        PropertyDate.values().forEach { date ->
+                                            DropdownMenuItem(
+                                                text = { Text(date.label) },
+                                                onClick = {
+                                                    onEvent(PropertyEvent.FilterBySoldDate(date))
+                                                    soldDateExpanded = false
                                                 },
                                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                             )

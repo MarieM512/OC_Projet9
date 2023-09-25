@@ -34,6 +34,7 @@
     <string name="picture">Picture</string>
     <string name="picture_filter_description">At least</string>
     <string name="entry_date">Entry date</string>
+    <string name="sold_date">Sold date</string>
     <string name="since">Since</string>
 
     <!-- List Screen -->

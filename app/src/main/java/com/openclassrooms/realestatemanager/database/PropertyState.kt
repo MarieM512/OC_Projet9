@@ -35,5 +35,6 @@ data class PropertyState(
     val minPiece: Int = 0,
     val maxPiece: Int = 1000,
     val filterPicture: Int = 1,
-    val filterEntryDate: PropertyDate? = null
+    val filterEntryDate: PropertyDate? = null,
+    val filterSoldDate: PropertyDate? = null
 )
