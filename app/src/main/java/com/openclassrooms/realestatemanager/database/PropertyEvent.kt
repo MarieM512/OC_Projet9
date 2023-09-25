@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.database
 
 import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.PropertyDate
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.utils.Status
 
@@ -19,6 +20,7 @@ sealed interface PropertyEvent {
     data class FilterByPieceMin(val min: Int) : PropertyEvent
     data class FilterByPieceMax(val max: Int) : PropertyEvent
     data class FilterByPicture(val number: Int) : PropertyEvent
+    data class FilterByEntryDate(val date: PropertyDate) : PropertyEvent
     object ResetFilter : PropertyEvent
 
     data class SetType(val type: PropertyType) : PropertyEvent

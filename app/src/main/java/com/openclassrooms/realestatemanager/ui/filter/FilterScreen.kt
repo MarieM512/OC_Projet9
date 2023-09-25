@@ -34,8 +34,10 @@ import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
+import com.openclassrooms.realestatemanager.database.utils.PropertyDate
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.card.CardFilterComparison
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +47,7 @@ fun FilterScreen(
 ) {
     var agentExpanded by remember { mutableStateOf(false) }
     var typeExpanded by remember { mutableStateOf(false) }
+    var entryDateExpanded by remember { mutableStateOf(false) }
 
     AppTheme {
         Column(
@@ -261,6 +264,63 @@ fun FilterScreen(
                                     text = stringResource(id = R.string.picture).lowercase(),
                                     textAlign = TextAlign.Center,
                                 )
+                            }
+                        }
+                    }
+                }
+                item {
+                    Card {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(stringResource(id = R.string.entry_date))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(id = R.string.since),
+                                    textAlign = TextAlign.Center,
+                                )
+                                ExposedDropdownMenuBox(
+                                    expanded = entryDateExpanded,
+                                    onExpandedChange = {
+                                        entryDateExpanded = !entryDateExpanded
+                                    },
+                                ) {
+                                    TextField(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .menuAnchor(),
+                                        readOnly = true,
+                                        value = state.filterEntryDate?.label ?: "",
+                                        onValueChange = {},
+                                        trailingIcon = {
+                                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                                expanded = entryDateExpanded,
+                                            )
+                                        },
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = entryDateExpanded,
+                                        onDismissRequest = { entryDateExpanded = false },
+                                    ) {
+                                        PropertyDate.values().forEach { date ->
+                                            DropdownMenuItem(
+                                                text = { Text(date.label) },
+                                                onClick = {
+                                                    onEvent(PropertyEvent.FilterByEntryDate(date))
+                                                    entryDateExpanded = false
+                                                },
+                                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

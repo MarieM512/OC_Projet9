@@ -33,6 +33,8 @@
     <string name="piece">Piece</string>
     <string name="picture">Picture</string>
     <string name="picture_filter_description">At least</string>
+    <string name="entry_date">Entry date</string>
+    <string name="since">Since</string>
 
     <!-- List Screen -->
     <string name="select_property">Select a property to show more details about it</string>
