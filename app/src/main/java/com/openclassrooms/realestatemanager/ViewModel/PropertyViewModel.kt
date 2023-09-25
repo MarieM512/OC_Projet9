@@ -3,18 +3,18 @@ package com.openclassrooms.realestatemanager.ViewModel
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.realestatemanager.database.utils.Agent
-import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
-import com.openclassrooms.realestatemanager.database.dao.NearInterestPointDao
-import com.openclassrooms.realestatemanager.database.entity.Property
-import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
+import com.openclassrooms.realestatemanager.database.dao.NearInterestPointDao
 import com.openclassrooms.realestatemanager.database.dao.PictureDao
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
+import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
 import com.openclassrooms.realestatemanager.database.entity.Picture
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PictureTuple
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,6 +45,7 @@ class PropertyViewModel(
                     _state.value.filterType,
                     _state.value.minPiece,
                     _state.value.maxPiece,
+                    _state.value.filterPicture,
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -61,6 +62,14 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
+            is PropertyEvent.FilterByPicture -> {
+                _state.update {
+                    it.copy(
+                        filterPicture = event.number,
+                    )
+                }
+            }
+
             is PropertyEvent.FilterBySurfaceMin -> {
                 _state.update {
                     it.copy(
@@ -145,6 +154,7 @@ class PropertyViewModel(
                         filterType = null,
                         minPiece = 0,
                         maxPiece = 1000,
+                        filterPicture = 1,
                     )
                 }
             }

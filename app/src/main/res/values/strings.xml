@@ -31,6 +31,8 @@
     <!-- Filter Screen -->
     <string name="filter">Filters</string>
     <string name="piece">Piece</string>
+    <string name="picture">Picture</string>
+    <string name="picture_filter_description">At least</string>
 
     <!-- List Screen -->
     <string name="select_property">Select a property to show more details about it</string>

@@ -25,7 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
@@ -214,6 +216,51 @@ fun FilterScreen(
                                         )
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(stringResource(id = R.string.picture))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(id = R.string.picture_filter_description),
+                                    textAlign = TextAlign.Center,
+                                )
+                                TextField(
+                                    modifier = Modifier.weight(1f),
+                                    value = state.filterPicture.toString(),
+                                    onValueChange = {
+                                        if (it.isEmpty()) {
+                                            onEvent(PropertyEvent.FilterByPicture(1))
+                                        } else if (it.isDigitsOnly()) {
+                                            onEvent(PropertyEvent.FilterByPicture(it.toInt()))
+                                        }
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number,
+                                        imeAction = ImeAction.Done,
+                                    ),
+                                    singleLine = true,
+                                )
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(id = R.string.picture).lowercase(),
+                                    textAlign = TextAlign.Center,
+                                )
                             }
                         }
                     }

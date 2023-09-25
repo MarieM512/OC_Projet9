@@ -33,4 +33,5 @@ data class PropertyState(
     val filterType: PropertyType? = null,
     val minPiece: Int = 0,
     val maxPiece: Int = 1000,
+    val filterPicture: Int = 1,
 )

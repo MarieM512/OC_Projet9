@@ -18,6 +18,7 @@ sealed interface PropertyEvent {
     data class FilterByType(val type: PropertyType) : PropertyEvent
     data class FilterByPieceMin(val min: Int) : PropertyEvent
     data class FilterByPieceMax(val max: Int) : PropertyEvent
+    data class FilterByPicture(val number: Int) : PropertyEvent
     object ResetFilter : PropertyEvent
 
     data class SetType(val type: PropertyType) : PropertyEvent
