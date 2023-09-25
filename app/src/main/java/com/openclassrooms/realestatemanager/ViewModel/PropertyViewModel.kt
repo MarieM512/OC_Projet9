@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.SortType
-import com.openclassrooms.realestatemanager.database.dao.PictureDao
 import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
 import com.openclassrooms.realestatemanager.database.entity.Picture
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
 import com.openclassrooms.realestatemanager.database.repository.PictureRepository
+import com.openclassrooms.realestatemanager.database.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PictureTuple
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class PropertyViewModel(
-    private val propertyDao: PropertyDao,
+    private val propertyRepo: PropertyRepository,
     private val nearRepo: NearInterestPointRepository,
     private val pictureRepo: PictureRepository,
 ) : ViewModel() {
@@ -37,8 +37,8 @@ class PropertyViewModel(
     private val _properties = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.RESET -> propertyDao.getAllProperties()
-                SortType.FILTER -> propertyDao.getPropertyFiltered(
+                SortType.RESET -> propertyRepo.getAllProperties()
+                SortType.FILTER -> propertyRepo.getPropertyFiltered(
                     _state.value.minSurface, _state.value.maxSurface,
                     _state.value.minPrice, _state.value.maxPrice,
                     _state.value.filterAgent,
@@ -283,7 +283,7 @@ class PropertyViewModel(
                     )
                 }
                 viewModelScope.launch {
-                    val propertyId = propertyDao.upsertProperty(property).toInt()
+                    val propertyId = propertyRepo.upsertProperty(property).toInt()
                     if (propertyId != -1) {
                         nearInterestPoint.forEach { nearInterestPoint ->
                             val near = NearInterestPoint(propertyId = propertyId, nearInterestPoint = nearInterestPoint)
