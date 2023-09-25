@@ -22,6 +22,7 @@ sealed interface PropertyEvent {
     data class FilterByPicture(val number: Int) : PropertyEvent
     data class FilterByEntryDate(val date: PropertyDate) : PropertyEvent
     data class FilterBySoldDate(val date: PropertyDate) : PropertyEvent
+    data class FilterByNear(val near: String) : PropertyEvent
     object ResetFilter : PropertyEvent
 
     data class SetType(val type: PropertyType) : PropertyEvent

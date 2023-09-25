@@ -16,26 +16,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.utils.InterestPoint
 import com.openclassrooms.realestatemanager.database.PropertyEvent
+import com.openclassrooms.realestatemanager.database.utils.InterestPoint
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterestChip(
     chip: SnapshotStateList<String>,
     onEvent: (PropertyEvent) -> Unit,
+    isFilter: Boolean,
 ) {
     LazyRow {
         item {
             InterestPoint.values().forEach { interest ->
                 FilterChip(
                     onClick = {
-                        if (chip.contains(interest.label)) {
-                            chip.remove(interest.label)
+                        if (isFilter) {
+                            if (chip.contains(interest.label)) {
+                                chip.remove(interest.label)
+                            } else if (chip.size != 3) {
+                                chip.add(interest.label)
+                            }
+                            onEvent(PropertyEvent.FilterByNear(interest.label))
                         } else {
-                            chip.add(interest.label)
+                            if (chip.contains(interest.label)) {
+                                chip.remove(interest.label)
+                            } else {
+                                chip.add(interest.label)
+                            }
+                            onEvent(PropertyEvent.SetNearInterestPoint(interest.label))
                         }
-                        onEvent(PropertyEvent.SetNearInterestPoint(interest.label))
                     },
                     label = { Text(interest.label) },
                     selected = chip.contains(interest.label),

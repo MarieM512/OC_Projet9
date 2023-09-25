@@ -283,7 +283,7 @@ fun AddScreen(
                                 viewModel::onEvent,
                             )
                         }
-                        InterestChip(chip, viewModel::onEvent)
+                        InterestChip(chip, viewModel::onEvent, false)
                         Row(
                             modifier = Modifier
                                 .padding(vertical = 8.dp)

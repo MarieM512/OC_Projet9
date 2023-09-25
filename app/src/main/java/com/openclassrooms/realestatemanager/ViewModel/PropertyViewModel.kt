@@ -48,6 +48,9 @@ class PropertyViewModel(
                     _state.value.filterPicture,
                     _state.value.filterEntryDate?.query,
                     _state.value.filterSoldDate?.query,
+                    if (_state.value.filterNear.size >= 1) _state.value.filterNear[0] else null,
+                    if (_state.value.filterNear.size >= 2) _state.value.filterNear[1] else null,
+                    if (_state.value.filterNear.size == 3) _state.value.filterNear[2] else null,
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -64,6 +67,22 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
+            is PropertyEvent.FilterByNear -> {
+                _state.update {
+                    val near = it.filterNear
+                    if (near.size != 3) {
+                        if (near.contains(event.near)) {
+                            near.remove(event.near)
+                        } else {
+                            near.add(event.near)
+                        }
+                    } else if (near.contains(event.near)) {
+                        near.remove(event.near)
+                    }
+                    it.copy(filterNear = near)
+                }
+            }
+
             is PropertyEvent.FilterBySoldDate -> {
                 _state.update {
                     it.copy(
@@ -175,6 +194,7 @@ class PropertyViewModel(
                         filterPicture = 1,
                         filterEntryDate = null,
                         filterSoldDate = null,
+                        filterNear = mutableListOf(),
                     )
                 }
             }

@@ -16,7 +16,9 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,14 +31,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
+import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PropertyDate
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.card.CardFilterComparison
+import com.openclassrooms.realestatemanager.ui.composant.chip.InterestChip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +51,11 @@ fun FilterScreen(
     var typeExpanded by remember { mutableStateOf(false) }
     var entryDateExpanded by remember { mutableStateOf(false) }
     var soldDateExpanded by remember { mutableStateOf(false) }
+    val chip = remember { mutableStateListOf<String>() }
+
+    LaunchedEffect(Unit) {
+        chip.addAll(state.filterNear)
+    }
 
     AppTheme {
         Column(
@@ -64,6 +72,7 @@ fun FilterScreen(
                     onClick = {
                         onEvent(PropertyEvent.SortProperty(SortType.RESET))
                         onEvent(PropertyEvent.ResetFilter)
+                        chip.clear()
                     },
                 ) {
                     Text(stringResource(id = R.string.button_reset))
@@ -379,6 +388,18 @@ fun FilterScreen(
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                item {
+                    Card {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(stringResource(id = R.string.interest_point))
+                            Text(stringResource(id = R.string.near_filter_description))
+                            InterestChip(chip = chip, onEvent = onEvent, isFilter = true)
                         }
                     }
                 }
