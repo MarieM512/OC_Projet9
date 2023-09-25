@@ -12,6 +12,7 @@ import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
 import com.openclassrooms.realestatemanager.database.entity.Picture
 import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
 import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PictureTuple
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
@@ -28,7 +29,7 @@ import java.util.Date
 
 class PropertyViewModel(
     private val propertyDao: PropertyDao,
-    private val nearDao: NearInterestPointDao,
+    private val nearRepo: NearInterestPointRepository,
     private val pictureDao: PictureDao,
 ) : ViewModel() {
 
@@ -286,7 +287,7 @@ class PropertyViewModel(
                     if (propertyId != -1) {
                         nearInterestPoint.forEach { nearInterestPoint ->
                             val near = NearInterestPoint(propertyId = propertyId, nearInterestPoint = nearInterestPoint)
-                            nearDao.insertNearInterestPoint(near)
+                            nearRepo.insertNearInterestPoint(near)
                         }
                         uriPicture.zip(titlePicture).forEach { currentPicture ->
                             val picture = Picture(propertyId = propertyId, uri = currentPicture.first, title = currentPicture.second)
@@ -297,12 +298,12 @@ class PropertyViewModel(
                         nearInterestPoint.forEach { nearInterestPoint ->
                             if (!nearDb.contains(nearInterestPoint)) {
                                 val near = NearInterestPoint(propertyId = id, nearInterestPoint = nearInterestPoint)
-                                nearDao.insertNearInterestPoint(near)
+                                nearRepo.insertNearInterestPoint(near)
                             }
                         }
                         nearDb.forEach { interestPoint ->
                             if (!nearInterestPoint.contains(interestPoint)) {
-                                nearDao.deleteNearInterestPoint(id, interestPoint)
+                                nearRepo.deleteNearInterestPoint(id, interestPoint)
                             }
                         }
                         val pictureDb = getPicture(id)
@@ -473,7 +474,7 @@ class PropertyViewModel(
     }
 
     fun getNearInterestPoint(id: Int): List<String> {
-        return nearDao.getNearInterestPointFromPropertyId(id)
+        return nearRepo.getNearInterestPointFromPropertyId(id)
     }
 
     fun getPicture(id: Int): List<PictureTuple> {
