@@ -31,6 +31,7 @@ sealed interface PropertyEvent {
     data class SetAddress(val address: String) : PropertyEvent
     data class SetLatitude(val latitude: Double) : PropertyEvent
     data class SetLongitude(val longitude: Double) : PropertyEvent
+    data class SetEntryDate(val date: String) : PropertyEvent
 
     data class SetNearInterestPoint(val nearInterestPoint: String) : PropertyEvent
 

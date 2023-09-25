@@ -181,6 +181,14 @@ class PropertyViewModel(
                 }
             }
 
+            is PropertyEvent.SetEntryDate -> {
+                _state.update {
+                    it.copy(
+                        entryDate = event.date
+                    )
+                }
+            }
+
             is PropertyEvent.SaveProperty -> {
                 val id = event.id
                 val type = _state.value.type
@@ -197,6 +205,7 @@ class PropertyViewModel(
                 val status = _state.value.status
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
+                val entryDate = _state.value.entryDate
 
                 val property: Property
 
@@ -212,7 +221,7 @@ class PropertyViewModel(
                         latitude = latitude,
                         longitude = longitude,
                         status = status,
-                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        entryDate = entryDate,
                         soldDate = soldDate,
                         agent = agent,
                     )
@@ -227,7 +236,7 @@ class PropertyViewModel(
                         latitude = latitude,
                         longitude = longitude,
                         status = status,
-                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        entryDate = SimpleDateFormat("dd-MM-yyyy").format(Date()),
                         soldDate = soldDate,
                         agent = agent,
                     )

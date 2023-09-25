@@ -173,6 +173,7 @@ fun AddScreen(
             viewModel.onEvent(PropertyEvent.SetDescription(property.description))
             viewModel.onEvent(PropertyEvent.SetLatitude(property.latitude))
             viewModel.onEvent(PropertyEvent.SetLongitude(property.longitude))
+            viewModel.onEvent(PropertyEvent.SetEntryDate(property.entryDate))
         } else {
             selectedImageUris.clear()
             selectedImageTitles.clear()
