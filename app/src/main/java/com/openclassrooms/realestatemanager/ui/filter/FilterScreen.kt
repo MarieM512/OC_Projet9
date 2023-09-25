@@ -77,7 +77,12 @@ fun FilterScreen(
                 ) {
                     Text(stringResource(id = R.string.button_reset))
                 }
-                Text(stringResource(id = R.string.filter))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(stringResource(id = R.string.filter))
+                    Text(stringResource(id = R.string.filter_description))
+                }
                 Button(
                     onClick = {
                         onEvent(PropertyEvent.SortProperty(SortType.FILTER))

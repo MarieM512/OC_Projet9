@@ -37,6 +37,7 @@
     <string name="sold_date">Sold date</string>
     <string name="since">Since</string>
     <string name="near_filter_description">3 maximum</string>
+    <string name="filter_description">Reset before apply again</string>
 
     <!-- List Screen -->
     <string name="select_property">Select a property to show more details about it</string>
