@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,10 @@ import com.openclassrooms.realestatemanager.theme.AppTheme
 fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
     val loanUiState by loanViewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(loanUiState) {
+        loanViewModel.isAllFieldsAreNotEmpty()
+    }
 
     AppTheme {
         LazyColumn(
