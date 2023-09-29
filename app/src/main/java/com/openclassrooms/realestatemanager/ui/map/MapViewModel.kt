@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.map
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -20,6 +21,7 @@ class MapViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
     private val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
 
+    @SuppressLint("MissingPermission")
     fun getCurrentLocation(camera: CameraPositionState) {
         fusedLocationClient
             .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
@@ -36,7 +38,6 @@ class MapViewModel : ViewModel() {
                         e.printStackTrace()
                     }
                 }
-                println(uiState.value.currentLocation)
             }
     }
 }
