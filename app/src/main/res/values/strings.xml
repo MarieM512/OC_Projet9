@@ -53,6 +53,8 @@
     <string name="camera_permission_description">Please go to your settings to allow camera permission in order to be able to take a picture from your device.</string>
     <string name="folder_permission_description">Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.</string>
     <string name="location_permission_description">Please go to your settings to allow location permission in order to be able to use the map.</string>
+    <string name="internet_title">Warning</string>
+    <string name="internet_description">You are not connected to internet so you will be able to create or modify a property except add or modify its address with his location.</string>
 
     <!-- Button -->
     <string name="button_confirm">Confirm</string>

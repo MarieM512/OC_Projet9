@@ -55,10 +55,10 @@ import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.database.utils.Agent
-import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.model.Address
@@ -70,6 +70,7 @@ import com.openclassrooms.realestatemanager.ui.composant.chip.InterestChip
 import com.openclassrooms.realestatemanager.ui.composant.image.DisplayImage
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarEdit
 import com.openclassrooms.realestatemanager.utils.ImageSave
+import com.openclassrooms.realestatemanager.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -115,6 +116,7 @@ fun AddScreen(
 
     val openDialogMissing = remember { mutableStateOf(false) }
     val openDialogSuccess = remember { mutableStateOf(false) }
+    val openDialogInternet = remember { mutableStateOf(false) }
 
     // Permissions
     val openDialogPicture = remember { mutableStateOf(false) }
@@ -152,6 +154,9 @@ fun AddScreen(
         }
 
     LaunchedEffect(Unit) {
+        if (!Utils.isInternetAvailable(context)) {
+            openDialogInternet.value = true
+        }
         if (property != null) {
             viewModel.getPicture(property.id).forEach { currentPicture ->
                 selectedImageUris.add(currentPicture.uri)
@@ -536,6 +541,9 @@ fun AddScreen(
                             }
                             if (openDialogSuccess.value) {
                                 DialogInformation(stringResource(id = R.string.success_title), stringResource(id = R.string.success_description), openDialogSuccess)
+                            }
+                            if (openDialogInternet.value) {
+                                DialogInformation(title = stringResource(id = R.string.internet_title), message = stringResource(id = R.string.internet_description), openDialog = openDialogInternet)
                             }
                         }
                     }
