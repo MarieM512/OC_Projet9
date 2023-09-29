@@ -1,5 +1,10 @@
 package com.openclassrooms.realestatemanager.ui
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +17,9 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
@@ -53,6 +61,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
             val windowSizeClass = calculateWindowSizeClass(activity = this)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel("success_property", "Property created", NotificationManager.IMPORTANCE_DEFAULT)
+                val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                manager.createNotificationChannel(channel)
+            }
             Scaffold(
                 bottomBar = {
                     BottomBar(navController = navController)

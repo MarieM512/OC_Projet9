@@ -1,6 +1,9 @@
 package com.openclassrooms.realestatemanager.ui.add
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -48,6 +51,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,6 +75,7 @@ import com.openclassrooms.realestatemanager.ui.composant.chip.InterestChip
 import com.openclassrooms.realestatemanager.ui.composant.image.DisplayImage
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarEdit
 import com.openclassrooms.realestatemanager.utils.ImageSave
+import com.openclassrooms.realestatemanager.utils.Notification
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -87,6 +93,7 @@ fun AddScreen(
     addViewModel: AddViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val activityContext = LocalContext.current as Activity
     val addUiState by addViewModel.uiState.collectAsState()
     var uri: Uri? = null
     val descriptionImage = remember { mutableStateOf("") }
@@ -115,13 +122,13 @@ fun AddScreen(
     )
 
     val openDialogMissing = remember { mutableStateOf(false) }
-    val openDialogSuccess = remember { mutableStateOf(false) }
     val openDialogInternet = remember { mutableStateOf(false) }
 
     // Permissions
     val openDialogPicture = remember { mutableStateOf(false) }
     val openDialogFolderPermission = remember { mutableStateOf(false) }
     val openDialogCameraPermission = remember { mutableStateOf(false) }
+    val openDialogNotificationPermission = remember { mutableStateOf(false) }
     val takePicture = remember { mutableStateOf(false) }
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -505,7 +512,15 @@ fun AddScreen(
                                             chip.clear()
                                             address = ""
                                             location.clear()
-                                            openDialogSuccess.value = true
+                                            if (ActivityCompat.checkSelfPermission(
+                                                    activityContext,
+                                                    Manifest.permission.POST_NOTIFICATIONS,
+                                                ) != PackageManager.PERMISSION_GRANTED
+                                            ) {
+                                                openDialogNotificationPermission.value = true
+                                            } else {
+                                                NotificationManagerCompat.from(activityContext).notify(0, Notification.sendNotification(activityContext))
+                                            }
                                             viewModel.onEvent(PropertyEvent.SaveProperty(-1))
                                         }
                                     }
@@ -539,11 +554,11 @@ fun AddScreen(
                             if (openDialogMissing.value) {
                                 DialogInformation(stringResource(id = R.string.missing_title), stringResource(id = R.string.missing_description), openDialogMissing)
                             }
-                            if (openDialogSuccess.value) {
-                                DialogInformation(stringResource(id = R.string.success_title), stringResource(id = R.string.success_description), openDialogSuccess)
-                            }
                             if (openDialogInternet.value) {
                                 DialogInformation(title = stringResource(id = R.string.internet_title), message = stringResource(id = R.string.internet_description), openDialog = openDialogInternet)
+                            }
+                            if (openDialogNotificationPermission.value) {
+                                DialogInformation(title = stringResource(id = R.string.permission_title), message = stringResource(id = R.string.notification_permission_description), openDialog = openDialogNotificationPermission)
                             }
                         }
                     }

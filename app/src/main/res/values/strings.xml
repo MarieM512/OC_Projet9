@@ -55,6 +55,7 @@
     <string name="location_permission_description">Please go to your settings to allow location permission in order to be able to use the map.</string>
     <string name="internet_title">Warning</string>
     <string name="internet_description">You are not connected to internet so you will be able to create or modify a property except add or modify its address with his location.</string>
+    <string name="notification_permission_description">You will not be notify when the property will be successfully created.</string>
 
     <!-- Button -->
     <string name="button_confirm">Confirm</string>
@@ -75,5 +76,9 @@
 
     <!-- TopBar -->
     <string name="edition">Edition</string>
+
+    <!-- Notification -->
+    <string name="notification_title">Success</string>
+    <string name="notification_description">You have successfully add your property.</string>
 
 </resources>
