@@ -26,11 +26,9 @@ abstract class PropertyDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: PropertyDatabase? = null
 
-
         fun getDatabase(
             context: Context,
         ): PropertyDatabase {
-
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
