@@ -29,7 +29,7 @@ interface PropertyDao {
             "AND property.address LIKE '%' || :address || '%' " +
             "AND (:type IS NULL OR property.type LIKE :type) " +
             "AND property.pieceNumber BETWEEN :minPiece AND :maxPiece " +
-            "AND (:near1 IS '' OR nearInterestPoint.nearInterestPoint = :near1) " +
+            "AND (:near1 IS NULL OR nearInterestPoint.nearInterestPoint = :near1) " +
             "OR (:near2 IS '' OR nearInterestPoint.nearInterestPoint = :near2) " +
             "OR (:near3 IS '' OR nearInterestPoint.nearInterestPoint = :near3) " +
             "GROUP BY property.id HAVING COUNT(picture.propertyId) >= :picture " +
