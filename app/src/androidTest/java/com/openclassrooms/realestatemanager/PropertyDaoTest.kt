@@ -2,11 +2,10 @@ package com.openclassrooms.realestatemanager
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.openclassrooms.realestatemanager.database.utils.Agent
-import com.openclassrooms.realestatemanager.database.utils.InterestPoint
-import com.openclassrooms.realestatemanager.database.entity.Property
-import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
+import com.openclassrooms.realestatemanager.database.dao.PropertyDao
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Agent
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.first
@@ -30,12 +29,9 @@ class PropertyDaoTest {
             surface = 100,
             pieceNumber = 4,
             description = "Little house far from the city",
-            uriPicture = listOf("content://com.openclassrooms.realestatemanager.provider/my_images/21092023_122146.png"),
-            titlePicture = listOf("kitchen"),
             address = "La Tancrere, La Varenne, Orée d'Anjou, PDL, France",
             latitude = 47.3099966,
             longitude = -1.3126905,
-            nearInterestPoint = listOf(InterestPoint.SCHOOL),
             status = Status.AVAILABLE,
             entryDate = "18/06/2022",
             soldDate = "",
@@ -49,7 +45,6 @@ class PropertyDaoTest {
         propertyDb = Room
             .inMemoryDatabaseBuilder(context, PropertyDatabase::class.java)
             .allowMainThreadQueries()
-            .addTypeConverter(Converters())
             .build()
         propertyDao = propertyDb.propertyDao
     }
@@ -64,12 +59,9 @@ class PropertyDaoTest {
         Assert.assertEquals(780, result.price)
         Assert.assertEquals(4, result.pieceNumber)
         Assert.assertEquals("Little house far from the city", result.description)
-        Assert.assertEquals(listOf("content://com.openclassrooms.realestatemanager.provider/my_images/21092023_122146.png"), result.uriPicture)
-        Assert.assertEquals(listOf("kitchen"), result.titlePicture)
         Assert.assertEquals("La Tancrere, La Varenne, Orée d'Anjou, PDL, France", result.address)
         Assert.assertEquals(47.3099966, result.latitude, 0.0)
         Assert.assertEquals(-1.3126905, result.longitude, 0.0)
-        Assert.assertEquals(listOf(InterestPoint.SCHOOL), result.nearInterestPoint)
         Assert.assertEquals(Status.AVAILABLE, result.status)
         Assert.assertEquals("18/06/2022", result.entryDate)
         Assert.assertEquals("", result.soldDate)
