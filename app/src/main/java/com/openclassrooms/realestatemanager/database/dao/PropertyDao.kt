@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.database.dao
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -37,4 +38,7 @@ interface PropertyDao {
             "AND (:soldDate IS NULL OR property.soldDate BETWEEN DATE('now', :soldDate) AND DATE('now')) ",
     )
     fun getPropertyFiltered(minSurface: Int, maxSurface: Int, minPrice: Int, maxPrice: Int, agent: Agent?, address: String, type: PropertyType?, minPiece: Int, maxPiece: Int, picture: Int, entryDate: String?, soldDate: String?, near1: String?, near2: String?, near3: String?): Flow<List<Property>>
+
+    @Query("SELECT * FROM property WHERE id = :id")
+    fun getPropertiesWithCursor(vararg id: Long): Cursor
 }

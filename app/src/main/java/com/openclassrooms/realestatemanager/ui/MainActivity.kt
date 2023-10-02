@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.ui
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,13 +15,9 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
 import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
@@ -34,21 +28,11 @@ import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.Naviga
 
 class MainActivity : ComponentActivity() {
 
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            PropertyDatabase::class.java,
-            "properties.db",
-        )
-            .allowMainThreadQueries()
-            .build()
-    }
-
     private val viewModel by viewModels<PropertyViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(PropertyRepository(db.propertyDao), NearInterestPointRepository(db.nearDao), PictureRepository(db.pictureDao)) as T
+                    return PropertyViewModel(PropertyRepository(PropertyDatabase.getDatabase(applicationContext).propertyDao), NearInterestPointRepository(PropertyDatabase.getDatabase(applicationContext).nearDao), PictureRepository(PropertyDatabase.getDatabase(applicationContext).pictureDao)) as T
                 }
             }
         },
