@@ -34,9 +34,7 @@ class MapViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         camera.animate(CameraUpdateFactory.newLatLng(uiState.value.currentLocation))
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    } catch (_: Exception) {}
                 }
             }
     }
