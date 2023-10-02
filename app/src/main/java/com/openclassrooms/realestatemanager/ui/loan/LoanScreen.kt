@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.theme.AppTheme
@@ -79,7 +80,11 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 ) {
                     TextField(
                         value = loanUiState.contribution,
-                        onValueChange = { loanViewModel.updateContribution(it) },
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                loanViewModel.updateContribution(it)
+                            }
+                        },
                         label = { Text(stringResource(id = R.string.contribution)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                         singleLine = true,
@@ -125,7 +130,11 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 }
                 TextField(
                     value = loanUiState.rate,
-                    onValueChange = { loanViewModel.updateRate(it) },
+                    onValueChange = {
+                        if (it.isDigitsOnly() || it.contains(".")) {
+                            loanViewModel.updateRate(it)
+                        }
+                    },
                     label = { Text(stringResource(id = R.string.rate)) },
                     trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
@@ -136,7 +145,11 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 )
                 TextField(
                     value = loanUiState.duration,
-                    onValueChange = { loanViewModel.updateDuration(it) },
+                    onValueChange = {
+                        if (it.isDigitsOnly()) {
+                            loanViewModel.updateDuration(it)
+                        }
+                    },
                     label = { Text(stringResource(id = R.string.duration)) },
                     trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
