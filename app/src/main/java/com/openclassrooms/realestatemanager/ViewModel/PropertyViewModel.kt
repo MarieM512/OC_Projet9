@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.database.SortType
-import com.openclassrooms.realestatemanager.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
 import com.openclassrooms.realestatemanager.database.entity.Picture
 import com.openclassrooms.realestatemanager.database.entity.Property
@@ -68,6 +67,15 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
+
+            PropertyEvent.ResetCreated -> {
+                _state.update {
+                    it.copy(
+                        isCreated = false
+                    )
+                }
+            }
+
             is PropertyEvent.FilterByNear -> {
                 _state.update {
                     val near = it.filterNear
@@ -292,6 +300,11 @@ class PropertyViewModel(
                         uriPicture.zip(titlePicture).forEach { currentPicture ->
                             val picture = Picture(propertyId = propertyId, uri = currentPicture.first, title = currentPicture.second)
                             pictureRepo.insertPicture(picture)
+                        }
+                        _state.update {
+                            it.copy(
+                                isCreated = true,
+                            )
                         }
                     } else {
                         val nearDb = getNearInterestPoint(id)

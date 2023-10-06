@@ -43,4 +43,6 @@ sealed interface PropertyEvent {
     data class SetSoldDate(val soldDate: String) : PropertyEvent
     data class SetAgent(val agent: Agent) : PropertyEvent
     data class SortProperty(val sortType: SortType) : PropertyEvent
+
+    object ResetCreated : PropertyEvent
 }

@@ -195,6 +195,21 @@ fun AddScreen(
         }
     }
 
+    LaunchedEffect(state.isCreated) {
+        if (state.isCreated) {
+            if (ActivityCompat.checkSelfPermission(
+                    activityContext,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                openDialogNotificationPermission.value = true
+            } else {
+                NotificationManagerCompat.from(activityContext).notify(0, Notification.sendNotification(activityContext))
+            }
+            viewModel.onEvent(PropertyEvent.ResetCreated)
+        }
+    }
+
     LaunchedEffect(addUiState.addressList) {
         location.clear()
         location.addAll(addUiState.addressList)
@@ -512,15 +527,6 @@ fun AddScreen(
                                             chip.clear()
                                             address = ""
                                             location.clear()
-                                            if (ActivityCompat.checkSelfPermission(
-                                                    activityContext,
-                                                    Manifest.permission.POST_NOTIFICATIONS,
-                                                ) != PackageManager.PERMISSION_GRANTED
-                                            ) {
-                                                openDialogNotificationPermission.value = true
-                                            } else {
-                                                NotificationManagerCompat.from(activityContext).notify(0, Notification.sendNotification(activityContext))
-                                            }
                                             viewModel.onEvent(PropertyEvent.SaveProperty(-1))
                                         }
                                     }

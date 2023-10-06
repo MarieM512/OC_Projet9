@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.database
 
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.utils.Agent
-import com.openclassrooms.realestatemanager.database.utils.InterestPoint
 import com.openclassrooms.realestatemanager.database.utils.PropertyDate
 import com.openclassrooms.realestatemanager.database.utils.PropertyType
 import com.openclassrooms.realestatemanager.database.utils.Status
@@ -39,4 +38,6 @@ data class PropertyState(
     val filterEntryDate: PropertyDate? = null,
     val filterSoldDate: PropertyDate? = null,
     val filterNear: MutableList<String> = mutableListOf(),
+
+    val isCreated: Boolean = false,
 )
