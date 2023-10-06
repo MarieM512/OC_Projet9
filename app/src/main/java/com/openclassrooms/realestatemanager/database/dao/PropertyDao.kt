@@ -2,7 +2,9 @@ package com.openclassrooms.realestatemanager.database.dao
 
 import android.database.Cursor
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.utils.Agent
@@ -11,6 +13,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertyDao {
+
+    @Insert
+    fun insertPropertyForContent(property: Property): Long
+
+    @Query("DELETE FROM property WHERE id = :propertyId")
+    fun deletePropertyForContent(propertyId: Long): Int
+
+    @Update
+    fun updatePropertyForContent(property: Property): Int
 
     @Upsert
     suspend fun upsertProperty(property: Property): Long

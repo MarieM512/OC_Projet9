@@ -41,14 +41,29 @@ class ContentProvider : ContentProvider() {
     }
 
     override fun insert(p0: Uri, p1: ContentValues?): Uri? {
-        return null
+        if (context != null && p1 != null) {
+            val id = PropertyDatabase.getDatabase(context!!).propertyDao.insertPropertyForContent(Property.fromContentValues(p1))
+            context!!.contentResolver.notifyChange(p0, null)
+            return ContentUris.withAppendedId(p0, id)
+        }
+        throw IllegalArgumentException("Failed to insert row into $p0")
     }
 
     override fun delete(p0: Uri, p1: String?, p2: Array<out String>?): Int {
-        return 0
+        if (context != null) {
+            val count = PropertyDatabase.getDatabase(context!!).propertyDao.deletePropertyForContent(ContentUris.parseId(p0))
+            context!!.contentResolver.notifyChange(p0, null)
+            return count
+        }
+        throw IllegalArgumentException("Failed to delete row into $p0")
     }
 
     override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
-        return 0
+        if (context != null && p1 != null) {
+            val count = PropertyDatabase.getDatabase(context!!).propertyDao.updatePropertyForContent(Property.fromContentValues(p1))
+            context!!.contentResolver.notifyChange(p0, null)
+            return count
+        }
+        throw IllegalArgumentException("Failed to update row into $p0")
     }
 }
