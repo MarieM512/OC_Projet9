@@ -11,8 +11,9 @@ import com.openclassrooms.realestatemanager.database.entity.Property
 class ContentProvider : ContentProvider() {
 
     companion object {
-        const val AUTHORITY: String = "com.openclassrooms.realestatemanager.provider"
-        val TABLE_REAL_ESTATE: String = Property::class.java.simpleName
+        val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
+        val TABLE_REAL_ESTATE = Property::class.java.simpleName
+        val URI_ITEM = Uri.parse("content://$AUTHORITY/$TABLE_REAL_ESTATE")
     }
 
     override fun onCreate(): Boolean {
@@ -41,10 +42,18 @@ class ContentProvider : ContentProvider() {
     }
 
     override fun insert(p0: Uri, p1: ContentValues?): Uri? {
-        if (context != null && p1 != null) {
-            val id = PropertyDatabase.getDatabase(context!!).propertyDao.insertPropertyForContent(Property.fromContentValues(p1))
-            context!!.contentResolver.notifyChange(p0, null)
-            return ContentUris.withAppendedId(p0, id)
+        if (context != null) {
+            val id = p1?.let {
+                Property.fromContentValues(
+                    it
+                )
+            }?.let {
+                PropertyDatabase.getDatabase(context!!).propertyDao.insertPropertyForContent(it)
+            }
+            if (id != 0L) {
+                context!!.contentResolver.notifyChange(p0, null)
+                return id?.let { ContentUris.withAppendedId(p0, it) }
+            }
         }
         throw IllegalArgumentException("Failed to insert row into $p0")
     }
