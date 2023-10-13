@@ -21,6 +21,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
+        <provider
+            android:authorities="com.openclassrooms.realestatemanager.provider"
+            android:name="com.openclassrooms.realestatemanager.provider.ContentProvider"
+            android:exported="true" />
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="${googleMapsApiKey}"/>
         <activity
@@ -42,10 +46,7 @@
                 android:resource="@xml/path_provider" />
         </provider>
 
-        <provider
-            android:authorities="com.openclassrooms.realestatemanager.provider"
-            android:name=".provider.ContentProvider"
-            android:exported="true" />
+
     </application>
 
 </manifest>
