@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.database.entity.Property
 class ContentProvider : ContentProvider() {
 
     companion object {
-        val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
+        val AUTHORITY = "com.openclassrooms.realestatemanager.data.provider"
         val TABLE_REAL_ESTATE = Property::class.java.simpleName
         val URI_ITEM = Uri.parse("content://$AUTHORITY/$TABLE_REAL_ESTATE")
     }
@@ -45,7 +45,7 @@ class ContentProvider : ContentProvider() {
         if (context != null) {
             val id = p1?.let {
                 Property.fromContentValues(
-                    it
+                    it,
                 )
             }?.let {
                 PropertyDatabase.getDatabase(context!!).propertyDao.insertPropertyForContent(it)

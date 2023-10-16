@@ -22,9 +22,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <provider
-            android:authorities="com.openclassrooms.realestatemanager.provider"
+            android:authorities="com.openclassrooms.realestatemanager.data.provider"
             android:name="com.openclassrooms.realestatemanager.provider.ContentProvider"
             android:exported="true" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path_provider" />
+        </provider>
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="${googleMapsApiKey}"/>
         <activity
@@ -36,17 +45,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/path_provider" />
-        </provider>
-
-
     </application>
 
 </manifest>

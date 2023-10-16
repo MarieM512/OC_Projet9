@@ -32,7 +32,7 @@ class ContentProviderTest {
     @Test
     fun getItem() {
         val propertyId = contentResolver!!.insert(ContentProvider.URI_ITEM, generateProperty())
-        val cursor = contentResolver!!.query(ContentUris.withAppendedId(ContentProvider.URI_ITEM, 305), null, null, null, null)
+        val cursor = contentResolver!!.query(ContentUris.withAppendedId(ContentProvider.URI_ITEM, 306), null, null, null, null)
         assertEquals(cursor?.count, 1)
         assertEquals(cursor?.moveToLast(), true)
         assertEquals(cursor?.getString(cursor.getColumnIndex("description")), "Little loft for student")
@@ -40,7 +40,7 @@ class ContentProviderTest {
 
     private fun generateProperty(): ContentValues {
         val values = ContentValues()
-        values.put("id", 305)
+        values.put("id", 306)
         values.put("type", PropertyType.LOFT.label)
         values.put("price", 800)
         values.put("surface", 50)
