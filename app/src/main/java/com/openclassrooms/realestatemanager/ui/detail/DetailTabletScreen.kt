@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,8 +40,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 
@@ -49,6 +51,8 @@ import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 fun DetailTabletScreen(
     property: Property,
     navController: NavController,
+    nearInterestPointList: List<String>,
+    viewModel: PropertyViewModel,
 ) {
     val context = LocalContext.current
 
@@ -72,7 +76,7 @@ fun DetailTabletScreen(
                             .fillMaxHeight()
                             .weight(1f),
                     ) {
-                        Carousel(context, property)
+                        Carousel(context, property, viewModel)
                     }
                     Column(
                         modifier = Modifier
@@ -105,7 +109,7 @@ fun DetailTabletScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Edit,
-                                        contentDescription = "Edit property",
+                                        contentDescription = stringResource(id = R.string.edit_property),
                                         tint = Color.Black,
                                     )
                                 }
@@ -114,17 +118,17 @@ fun DetailTabletScreen(
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text("Entry: ${property.entryDate}")
+                            Text(stringResource(id = R.string.detail_entry, property.entryDate))
                             if (property.soldDate.isNotEmpty()) {
-                                Text("Sold: ${property.soldDate}")
+                                Text(stringResource(id = R.string.detail_sold, property.soldDate))
                             }
                         }
                         LazyRow() {
                             item {
-                                property.nearInterestPoint.forEach { interest ->
+                                nearInterestPointList.forEach { interest ->
                                     FilterChip(
                                         onClick = {},
-                                        label = { Text(interest.label) },
+                                        label = { Text(interest) },
                                         selected = true,
                                         modifier = Modifier
                                             .padding(horizontal = 4.dp),
@@ -138,8 +142,8 @@ fun DetailTabletScreen(
                                 modifier = Modifier
                                     .weight(1f),
                             ) {
-                                Text("Surface: ${property.surface} m²")
-                                Text("Piece: ${property.pieceNumber}")
+                                Text(stringResource(id = R.string.detail_surface, property.surface))
+                                Text(stringResource(id = R.string.detail_piece, property.pieceNumber))
                             }
                             Column(
                                 modifier = Modifier
@@ -162,7 +166,7 @@ fun DetailTabletScreen(
                                     .weight(1f),
                             ) {
                                 Row() {
-                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = stringResource(id = R.string.address))
                                     Text(property.address)
                                 }
                             }

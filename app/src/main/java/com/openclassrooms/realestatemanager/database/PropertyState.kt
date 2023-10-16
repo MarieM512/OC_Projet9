@@ -1,5 +1,11 @@
 package com.openclassrooms.realestatemanager.database
 
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.PropertyDate
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
+
 data class PropertyState(
     val property: List<Property> = emptyList(),
     val type: PropertyType = PropertyType.HOUSE,
@@ -12,7 +18,7 @@ data class PropertyState(
     val address: String = "",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val nearInterestPoint: MutableList<InterestPoint> = mutableListOf(),
+    val nearInterestPoint: MutableList<String> = mutableListOf(),
     val status: Status = Status.AVAILABLE,
     val entryDate: String = "",
     val soldDate: String = "",
@@ -28,4 +34,10 @@ data class PropertyState(
     val filterType: PropertyType? = null,
     val minPiece: Int = 0,
     val maxPiece: Int = 1000,
+    val filterPicture: Int = 1,
+    val filterEntryDate: PropertyDate? = null,
+    val filterSoldDate: PropertyDate? = null,
+    val filterNear: MutableList<String> = mutableListOf(),
+
+    val isCreated: Boolean = false,
 )

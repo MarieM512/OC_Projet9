@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.theme.AppTheme
@@ -43,6 +45,10 @@ import com.openclassrooms.realestatemanager.theme.AppTheme
 fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
     val loanUiState by loanViewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(loanUiState) {
+        loanViewModel.isAllFieldsAreNotEmpty()
+    }
 
     AppTheme {
         LazyColumn(
@@ -74,7 +80,11 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 ) {
                     TextField(
                         value = loanUiState.contribution,
-                        onValueChange = { loanViewModel.updateContribution(it) },
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                loanViewModel.updateContribution(it)
+                            }
+                        },
                         label = { Text(stringResource(id = R.string.contribution)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                         singleLine = true,
@@ -120,9 +130,13 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 }
                 TextField(
                     value = loanUiState.rate,
-                    onValueChange = { loanViewModel.updateRate(it) },
+                    onValueChange = {
+                        if (it.isDigitsOnly() || it.contains(".")) {
+                            loanViewModel.updateRate(it)
+                        }
+                    },
                     label = { Text(stringResource(id = R.string.rate)) },
-                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = "contribution") },
+                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_percentage), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                     singleLine = true,
                     modifier = Modifier
@@ -131,9 +145,13 @@ fun LoanScreen(loanViewModel: LoanViewModel = viewModel()) {
                 )
                 TextField(
                     value = loanUiState.duration,
-                    onValueChange = { loanViewModel.updateDuration(it) },
+                    onValueChange = {
+                        if (it.isDigitsOnly()) {
+                            loanViewModel.updateDuration(it)
+                        }
+                    },
                     label = { Text(stringResource(id = R.string.duration)) },
-                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = "contribution") },
+                    trailingIcon = { Icon(painterResource(id = R.drawable.ic_duration), contentDescription = stringResource(R.string.contribution)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     singleLine = true,
                     modifier = Modifier

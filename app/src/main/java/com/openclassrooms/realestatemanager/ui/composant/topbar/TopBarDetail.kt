@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Status
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +28,7 @@ fun TopBarDetail(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "${property.price} $",
+                text = stringResource(R.string.detail_price, property.price),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -35,7 +37,7 @@ fun TopBarDetail(
             IconButton(onClick = { navController.navigateUp() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(id = R.string.back),
                 )
             }
         },
@@ -44,7 +46,7 @@ fun TopBarDetail(
                 IconButton(onClick = { navController.navigate("edit/$property") }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit property",
+                        contentDescription = stringResource(id = R.string.edit_property),
                         tint = Color.Black,
                     )
                 }

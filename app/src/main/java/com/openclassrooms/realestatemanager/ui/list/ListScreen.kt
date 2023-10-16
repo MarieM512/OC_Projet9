@@ -25,13 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 
@@ -39,9 +40,9 @@ import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 @Composable
 fun ListScreen(
     state: PropertyState,
-    viewModel: PropertyViewModel,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
+    viewModel: PropertyViewModel,
 ): Property? {
     val context = LocalContext.current
     val propertyClick: MutableState<Property?> = remember { mutableStateOf(null) }
@@ -65,14 +66,14 @@ fun ListScreen(
                         }
                     },
                     colors = CardDefaults.cardColors(
-                        containerColor = if (property.status == Status.SOLD) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer
+                        containerColor = if (property.status == Status.SOLD) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
                     ),
                 ) {
                     Column(
                         modifier = Modifier
                             .padding(18.dp),
                     ) {
-                        Carousel(context, property)
+                        Carousel(context, property, viewModel)
                         Column(
                             modifier = Modifier
                                 .padding(vertical = 8.dp)
@@ -80,24 +81,24 @@ fun ListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(text = property.type.label)
-                            Row() {
+                            Row {
                                 Column(
                                     modifier = Modifier
                                         .weight(1f),
                                 ) {
-                                    Text(text = "Surface: ${property.surface} m²")
-                                    Text(text = "Piece: ${property.pieceNumber}")
+                                    Text(text = stringResource(id = R.string.detail_surface, property.surface))
+                                    Text(text = stringResource(id = R.string.detail_piece, property.pieceNumber))
                                 }
                                 Column(
                                     modifier = Modifier
                                         .weight(1f),
                                     horizontalAlignment = Alignment.End,
                                 ) {
-                                    Text(text = "${property.price} $")
+                                    Text(text = stringResource(id = R.string.detail_price, property.price))
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                                     ) {
-                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                        Icon(painterResource(id = R.drawable.ic_address), contentDescription = stringResource(R.string.address))
                                         Text(text = property.address)
                                     }
                                 }

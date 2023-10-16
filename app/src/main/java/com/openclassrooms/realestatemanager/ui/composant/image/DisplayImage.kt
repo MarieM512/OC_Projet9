@@ -20,10 +20,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 
 @Composable
@@ -57,7 +59,7 @@ fun DisplayImage(
                             onEvent(PropertyEvent.SetTitlePicture(image.second))
                         },
                     ) {
-                        Icon(Icons.Filled.Clear, "Delete picture")
+                        Icon(Icons.Filled.Clear, stringResource(id = R.string.delete_picture))
                     }
                     Text(
                         modifier = Modifier

@@ -3,16 +3,19 @@ package com.openclassrooms.realestatemanager.ViewModel
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.realestatemanager.database.Agent
-import com.openclassrooms.realestatemanager.database.InterestPoint
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.PropertyDao
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.database.PropertyState
-import com.openclassrooms.realestatemanager.database.PropertyType
 import com.openclassrooms.realestatemanager.database.SortType
-import com.openclassrooms.realestatemanager.database.Status
-import kotlinx.coroutines.Dispatchers
+import com.openclassrooms.realestatemanager.database.entity.NearInterestPoint
+import com.openclassrooms.realestatemanager.database.entity.Picture
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
+import com.openclassrooms.realestatemanager.database.repository.PictureRepository
+import com.openclassrooms.realestatemanager.database.repository.PropertyRepository
+import com.openclassrooms.realestatemanager.database.utils.Agent
+import com.openclassrooms.realestatemanager.database.utils.PictureTuple
+import com.openclassrooms.realestatemanager.database.utils.PropertyType
+import com.openclassrooms.realestatemanager.database.utils.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -24,15 +27,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class PropertyViewModel(
-    private val dao: PropertyDao,
+    private val propertyRepo: PropertyRepository,
+    private val nearRepo: NearInterestPointRepository,
+    private val pictureRepo: PictureRepository,
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.RESET)
     private val _properties = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.RESET -> dao.getAllProperties()
-                SortType.FILTER -> dao.getPropertyFiltered(
+                SortType.RESET -> propertyRepo.getAllProperties()
+                SortType.FILTER -> propertyRepo.getPropertyFiltered(
                     _state.value.minSurface, _state.value.maxSurface,
                     _state.value.minPrice, _state.value.maxPrice,
                     _state.value.filterAgent,
@@ -40,6 +45,12 @@ class PropertyViewModel(
                     _state.value.filterType,
                     _state.value.minPiece,
                     _state.value.maxPiece,
+                    _state.value.filterPicture,
+                    _state.value.filterEntryDate?.query,
+                    _state.value.filterSoldDate?.query,
+                    if (_state.value.filterNear.size >= 1) _state.value.filterNear[0] else null,
+                    if (_state.value.filterNear.size >= 2) _state.value.filterNear[1] else null,
+                    if (_state.value.filterNear.size == 3) _state.value.filterNear[2] else null,
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -56,10 +67,52 @@ class PropertyViewModel(
     @SuppressLint("SimpleDateFormat")
     fun onEvent(event: PropertyEvent) {
         when (event) {
-            //
-            PropertyEvent.DeleteAllProperty -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    dao.nukeTable()
+
+            PropertyEvent.ResetCreated -> {
+                _state.update {
+                    it.copy(
+                        isCreated = false
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByNear -> {
+                _state.update {
+                    val near = it.filterNear
+                    if (near.size != 3) {
+                        if (near.contains(event.near)) {
+                            near.remove(event.near)
+                        } else {
+                            near.add(event.near)
+                        }
+                    } else if (near.contains(event.near)) {
+                        near.remove(event.near)
+                    }
+                    it.copy(filterNear = near)
+                }
+            }
+
+            is PropertyEvent.FilterBySoldDate -> {
+                _state.update {
+                    it.copy(
+                        filterSoldDate = event.date,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByEntryDate -> {
+                _state.update {
+                    it.copy(
+                        filterEntryDate = event.date,
+                    )
+                }
+            }
+
+            is PropertyEvent.FilterByPicture -> {
+                _state.update {
+                    it.copy(
+                        filterPicture = event.number,
+                    )
                 }
             }
 
@@ -147,6 +200,10 @@ class PropertyViewModel(
                         filterType = null,
                         minPiece = 0,
                         maxPiece = 1000,
+                        filterPicture = 1,
+                        filterEntryDate = null,
+                        filterSoldDate = null,
+                        filterNear = mutableListOf(),
                     )
                 }
             }
@@ -173,6 +230,14 @@ class PropertyViewModel(
                 }
             }
 
+            is PropertyEvent.SetEntryDate -> {
+                _state.update {
+                    it.copy(
+                        entryDate = event.date,
+                    )
+                }
+            }
+
             is PropertyEvent.SaveProperty -> {
                 val id = event.id
                 val type = _state.value.type
@@ -189,6 +254,7 @@ class PropertyViewModel(
                 val status = _state.value.status
                 val soldDate = _state.value.soldDate
                 val agent = _state.value.agent
+                val entryDate = _state.value.entryDate
 
                 val property: Property
 
@@ -200,14 +266,11 @@ class PropertyViewModel(
                         surface = surface,
                         pieceNumber = pieceNumber,
                         description = description,
-                        uriPicture = uriPicture,
-                        titlePicture = titlePicture,
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
-                        nearInterestPoint = nearInterestPoint,
                         status = status,
-                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        entryDate = entryDate,
                         soldDate = soldDate,
                         agent = agent,
                     )
@@ -218,21 +281,60 @@ class PropertyViewModel(
                         surface = surface,
                         pieceNumber = pieceNumber,
                         description = description,
-                        uriPicture = uriPicture,
-                        titlePicture = titlePicture,
                         address = address,
                         latitude = latitude,
                         longitude = longitude,
-                        nearInterestPoint = nearInterestPoint,
                         status = status,
-                        entryDate = SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        entryDate = SimpleDateFormat("dd-MM-yyyy").format(Date()),
                         soldDate = soldDate,
                         agent = agent,
                     )
                 }
                 viewModelScope.launch {
-                    dao.upsertProperty(property)
+                    val propertyId = propertyRepo.upsertProperty(property).toInt()
+                    if (propertyId != -1) {
+                        nearInterestPoint.forEach { nearInterestPoint ->
+                            val near = NearInterestPoint(propertyId = propertyId, nearInterestPoint = nearInterestPoint)
+                            nearRepo.insertNearInterestPoint(near)
+                        }
+                        uriPicture.zip(titlePicture).forEach { currentPicture ->
+                            val picture = Picture(propertyId = propertyId, uri = currentPicture.first, title = currentPicture.second)
+                            pictureRepo.insertPicture(picture)
+                        }
+                        _state.update {
+                            it.copy(
+                                isCreated = true,
+                            )
+                        }
+                    } else {
+                        val nearDb = getNearInterestPoint(id)
+                        nearInterestPoint.forEach { nearInterestPoint ->
+                            if (!nearDb.contains(nearInterestPoint)) {
+                                val near = NearInterestPoint(propertyId = id, nearInterestPoint = nearInterestPoint)
+                                nearRepo.insertNearInterestPoint(near)
+                            }
+                        }
+                        nearDb.forEach { interestPoint ->
+                            if (!nearInterestPoint.contains(interestPoint)) {
+                                nearRepo.deleteNearInterestPoint(id, interestPoint)
+                            }
+                        }
+                        val pictureDb = getPicture(id)
+                        uriPicture.zip(titlePicture).forEach { currentPicture ->
+                            val pictureTuple = PictureTuple(uri = currentPicture.first, title = currentPicture.second)
+                            if (!pictureDb.contains(pictureTuple)) {
+                                val picture = Picture(propertyId = id, uri = currentPicture.first, title = currentPicture.second)
+                                pictureRepo.insertPicture(picture)
+                            }
+                        }
+                        pictureDb.forEach { currentPicture ->
+                            if (!(uriPicture.contains(currentPicture.uri) && titlePicture.contains(currentPicture.title))) {
+                                pictureRepo.deletePicture(id, currentPicture.uri, currentPicture.title)
+                            }
+                        }
+                    }
                 }
+
                 _state.update {
                     it.copy(
                         type = PropertyType.HOUSE,
@@ -296,7 +398,7 @@ class PropertyViewModel(
 
             is PropertyEvent.SetNearInterestPoint -> {
                 _state.update {
-                    val near: MutableList<InterestPoint> = it.nearInterestPoint
+                    val near: MutableList<String> = it.nearInterestPoint
                     if (near.contains(event.nearInterestPoint)) {
                         near.remove(event.nearInterestPoint)
                     } else {
@@ -382,5 +484,13 @@ class PropertyViewModel(
                 _sortType.value = event.sortType
             }
         }
+    }
+
+    fun getNearInterestPoint(id: Int): List<String> {
+        return nearRepo.getNearInterestPointFromPropertyId(id)
+    }
+
+    fun getPicture(id: Int): List<PictureTuple> {
+        return pictureRepo.getPictureFromPropertyId(id)
     }
 }

@@ -26,16 +26,19 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
+import com.openclassrooms.realestatemanager.database.entity.Property
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Carousel(
     context: Context,
     property: Property,
+    viewModel: PropertyViewModel,
 ) {
+    val picture = viewModel.getPicture(property.id)
     val pagerState = rememberPagerState(pageCount = {
-        property.uriPicture.size
+        picture.size
     })
     Box(
         contentAlignment = Alignment.BottomCenter,
@@ -46,14 +49,14 @@ fun Carousel(
             Box() {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data(property.uriPicture[page].toUri()).crossfade(true).build(),
+                        .data(picture[page].uri.toUri()).crossfade(true).build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
                 Text(
-                    text = property.titlePicture[page],
+                    text = picture[page].title,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.outline)
                         .fillMaxWidth(),
@@ -69,7 +72,7 @@ fun Carousel(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            repeat(property.uriPicture.size) { iteration ->
+            repeat(picture.size) { iteration ->
                 val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                 Box(
                     modifier = Modifier

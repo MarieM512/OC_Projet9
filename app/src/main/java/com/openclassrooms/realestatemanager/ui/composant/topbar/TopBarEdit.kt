@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.database.PropertyEvent
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomNavItem
 
@@ -28,7 +30,7 @@ fun TopBarEdit(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "Edition",
+                stringResource(id = R.string.edition),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -40,7 +42,7 @@ fun TopBarEdit(
             }) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Cancel",
+                    contentDescription = stringResource(id = R.string.button_cancel),
                 )
             }
         },
@@ -51,7 +53,7 @@ fun TopBarEdit(
             }) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = "Save",
+                    contentDescription = stringResource(id = R.string.button_save),
                     tint = Color.Black,
                 )
             }

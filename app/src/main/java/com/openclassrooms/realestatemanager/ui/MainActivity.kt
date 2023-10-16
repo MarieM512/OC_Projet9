@@ -1,5 +1,8 @@
 package com.openclassrooms.realestatemanager.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,30 +18,21 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
 import com.openclassrooms.realestatemanager.database.PropertyDatabase
+import com.openclassrooms.realestatemanager.database.repository.NearInterestPointRepository
+import com.openclassrooms.realestatemanager.database.repository.PictureRepository
+import com.openclassrooms.realestatemanager.database.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.BottomBar
 import com.openclassrooms.realestatemanager.ui.composant.bottomNavigation.NavigationGraph
-import com.openclassrooms.realestatemanager.utils.Converters
 
 class MainActivity : ComponentActivity() {
-
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            PropertyDatabase::class.java,
-            "properties.db",
-        )
-            .addTypeConverter(Converters())
-            .build()
-    }
 
     private val viewModel by viewModels<PropertyViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PropertyViewModel(db.dao) as T
+                    return PropertyViewModel(PropertyRepository(PropertyDatabase.getDatabase(applicationContext).propertyDao), NearInterestPointRepository(PropertyDatabase.getDatabase(applicationContext).nearDao), PictureRepository(PropertyDatabase.getDatabase(applicationContext).pictureDao)) as T
                 }
             }
         },
@@ -51,8 +45,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
             val windowSizeClass = calculateWindowSizeClass(activity = this)
-//            deleteDatabase("properties.db")
-//            PropertyScreen(state = state, onEvent = viewModel::onEvent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel("success_property", "Property created", NotificationManager.IMPORTANCE_DEFAULT)
+                val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                manager.createNotificationChannel(channel)
+            }
             Scaffold(
                 bottomBar = {
                     BottomBar(navController = navController)

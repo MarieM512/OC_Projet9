@@ -1,25 +1,22 @@
 package com.openclassrooms.realestatemanager.ui.add
 
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
-import com.openclassrooms.realestatemanager.model.ResponseResult
+import com.openclassrooms.realestatemanager.api.AddressRepository
+import com.openclassrooms.realestatemanager.api.ApiService
+import com.openclassrooms.realestatemanager.model.Address
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
 
-class AddViewModel : ViewModel() {
+class AddViewModel : ViewModel(), ApiService {
 
     private val _uiState = MutableStateFlow(AddUiState())
     val uiState: StateFlow<AddUiState> = _uiState.asStateFlow()
+    private val addressRepository = AddressRepository()
 
     fun updateAddress(value: String) {
+        addressRepository.setAddress(value)
         _uiState.update {
             it.copy(
                 address = value,
@@ -28,27 +25,23 @@ class AddViewModel : ViewModel() {
     }
 
     fun getAddressList() {
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url("https://api.geoapify.com/v1/geocode/autocomplete?text=${uiState.value.address}&limit=10&format=json&apiKey=342761ffcef34fe2b6ea8e0b468ddc4b")
-            .get()
-            .addHeader("accept", "application/json")
-            .build()
+        addressRepository.getAddressList(this)
+    }
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val addressList = Gson().fromJson(response.body?.string(), ResponseResult::class.java)
-                _uiState.update {
-                    it.copy(
-                        addressList = addressList.results,
-                    )
-                }
-                println(uiState.value.addressList)
-            }
+    fun reset() {
+        _uiState.update {
+            it.copy(
+                address = "",
+                addressList = emptyList(),
+            )
+        }
+    }
 
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
-        })
+    override fun getAddressList(addressList: List<Address>) {
+        _uiState.update {
+            it.copy(
+                addressList = addressList,
+            )
+        }
     }
 }

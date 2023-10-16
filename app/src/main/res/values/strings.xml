@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Real Estate Manager</string>
 
-    <!-- Loan View -->
+    <!-- Loan Screen -->
     <string name="property_loan">Property loan</string>
     <string name="description_loan">To simulate your monthly mortgage payments, enter the capital you want to borrow, the nominal rate and the duration of the credit in a year.</string>
     <string name="contribution">Contribution</string>
@@ -9,7 +9,7 @@
     <string name="duration">Duration</string>
     <string name="simulate">Simulate</string>
 
-    <!-- Add View -->
+    <!-- Add Screen -->
     <string name="type">Type</string>
     <string name="surface">Surface</string>
     <string name="piece_number">Number of piece</string>
@@ -20,5 +20,65 @@
     <string name="agent">Agent</string>
     <string name="add">Add</string>
     <string name="sold">Sold</string>
+
+    <!-- Detail Screen -->
+    <string name="detail_entry">Entry : %1$s</string>
+    <string name="detail_sold">Sold : %1$s</string>
+    <string name="detail_surface">Surface : %1$d m²</string>
+    <string name="detail_piece">Piece : %1$d</string>
+    <string name="detail_price">%1$d $</string>
+
+    <!-- Filter Screen -->
+    <string name="filter">Filters</string>
+    <string name="piece">Piece</string>
+    <string name="picture">Picture</string>
+    <string name="picture_filter_description">At least</string>
+    <string name="entry_date">Entry date</string>
+    <string name="sold_date">Sold date</string>
+    <string name="since">Since</string>
+    <string name="near_filter_description">3 maximum</string>
+    <string name="filter_description">Reset before apply again</string>
+
+    <!-- List Screen -->
+    <string name="select_property">Select a property to show more details about it</string>
+
+    <!-- Alert Dialog -->
+    <string name="picture_title">Image</string>
+    <string name="picture_description">Picture\'s title</string>
+    <string name="missing_title">Missing information</string>
+    <string name="missing_description">Please be sure to fill all the information with at least one picture.</string>
+    <string name="success_title">Success</string>
+    <string name="success_description">You have successfully add your property.</string>
+    <string name="permission_title">Permission denied</string>
+    <string name="camera_permission_description">Please go to your settings to allow camera permission in order to be able to take a picture from your device.</string>
+    <string name="folder_permission_description">Please go to your settings to allow files and media permission in order to be able to pick picture from your gallery.</string>
+    <string name="location_permission_description">Please go to your settings to allow location permission in order to be able to use the map.</string>
+    <string name="internet_title">Warning</string>
+    <string name="internet_description">You are not connected to internet so you will be able to create or modify a property except add or modify its address with his location.</string>
+    <string name="notification_permission_description">You will not be notify when the property will be successfully created.</string>
+
+    <!-- Button -->
+    <string name="button_confirm">Confirm</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_got_it">Got it</string>
+    <string name="button_save">Save</string>
+    <string name="button_reset">Reset</string>
+    <string name="button_apply">Apply</string>
+
+    <!-- Content description -->
+    <string name="camera">Take a picture</string>
+    <string name="gallery">Add a picture</string>
+    <string name="done">Done icon</string>
+    <string name="delete_picture">Delete picture</string>
+    <string name="back">Back</string>
+    <string name="edit_property">Edit property</string>
+    <string name="home">Home</string>
+
+    <!-- TopBar -->
+    <string name="edition">Edition</string>
+
+    <!-- Notification -->
+    <string name="notification_title">Success</string>
+    <string name="notification_description">You have successfully add your property.</string>
 
 </resources>

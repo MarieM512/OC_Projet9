@@ -19,7 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
-import com.openclassrooms.realestatemanager.database.Property
+import com.openclassrooms.realestatemanager.database.entity.Property
 import com.openclassrooms.realestatemanager.database.PropertyState
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.add.AddScreen
@@ -44,14 +44,14 @@ fun NavigationGraph(
         composable(BottomNavItem.List.route) {
             when (windowSizeClass.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-                    ListScreen(state, viewModel, navController, windowSizeClass)
+                    ListScreen(state, navController, windowSizeClass, viewModel)
                 } else -> {
-                    ListTabletScreen(state, viewModel, navController, windowSizeClass)
+                    ListTabletScreen(state, navController, windowSizeClass, viewModel)
                 }
             }
         }
         composable(BottomNavItem.Add.route) {
-            AddScreen(state = state, onEvent = viewModel::onEvent, navController = navController)
+            AddScreen(state = state, viewModel = viewModel, navController = navController)
         }
         composable(BottomNavItem.Filter.route) {
             FilterScreen(state, viewModel::onEvent)
@@ -62,13 +62,13 @@ fun NavigationGraph(
         composable("property/{propertyId}") { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                DetailScreen(property = property, navController = navController)
+                DetailScreen(property = property, navController = navController, nearInterestPointList = viewModel.getNearInterestPoint(property.id), viewModel = viewModel)
             }
         }
         composable("edit/{propertyId}") { navBackStackEntry ->
             val property = navBackStackEntry.arguments?.getString("propertyId")?.let { Gson().fromJson(it, Property::class.java) }
             if (property != null) {
-                AddScreen(state = state, onEvent = viewModel::onEvent, property = property, navController = navController)
+                AddScreen(state = state, viewModel = viewModel, property = property, navController = navController)
             }
         }
     }

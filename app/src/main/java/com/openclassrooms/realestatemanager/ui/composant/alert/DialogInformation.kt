@@ -5,6 +5,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.res.stringResource
+import com.openclassrooms.realestatemanager.R
 
 @Composable
 fun DialogInformation(title: String, message: String, openDialog: MutableState<Boolean>) {
@@ -22,7 +24,7 @@ fun DialogInformation(title: String, message: String, openDialog: MutableState<B
                     openDialog.value = false
                 },
             ) {
-                Text("Got it")
+                Text(stringResource(id = R.string.button_got_it))
             }
         },
     )

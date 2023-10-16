@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
@@ -33,8 +34,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.database.Property
-import com.openclassrooms.realestatemanager.database.Status
+import com.openclassrooms.realestatemanager.ViewModel.PropertyViewModel
+import com.openclassrooms.realestatemanager.database.entity.Property
+import com.openclassrooms.realestatemanager.database.utils.Status
 import com.openclassrooms.realestatemanager.theme.AppTheme
 import com.openclassrooms.realestatemanager.ui.composant.carousel.Carousel
 import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarDetail
@@ -44,6 +46,8 @@ import com.openclassrooms.realestatemanager.ui.composant.topbar.TopBarDetail
 fun DetailScreen(
     property: Property,
     navController: NavController,
+    nearInterestPointList: List<String>,
+    viewModel: PropertyViewModel,
 ) {
     val context = LocalContext.current
 
@@ -65,7 +69,7 @@ fun DetailScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
-                        Carousel(context = context, property = property)
+                        Carousel(context = context, property = property, viewModel = viewModel)
                     }
                     item {
                         Column(
@@ -87,9 +91,9 @@ fun DetailScreen(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text("Entry: ${property.entryDate}")
+                            Text(stringResource(id = R.string.detail_entry, property.entryDate))
                             if (property.soldDate.isNotEmpty()) {
-                                Text("Sold: ${property.soldDate}")
+                                Text(stringResource(id = R.string.detail_sold, property.soldDate))
                             }
                         }
                     }
@@ -102,8 +106,8 @@ fun DetailScreen(
                                 modifier = Modifier
                                     .weight(1f),
                             ) {
-                                Text("Surface: ${property.surface} m²")
-                                Text("Piece: ${property.pieceNumber}")
+                                Text(stringResource(id = R.string.detail_surface, property.surface))
+                                Text(stringResource(id = R.string.detail_piece, property.pieceNumber))
                             }
                             Column(
                                 modifier = Modifier
@@ -116,10 +120,10 @@ fun DetailScreen(
                         }
                         LazyRow() {
                             item {
-                                property.nearInterestPoint.forEach { interest ->
+                                nearInterestPointList.forEach { interest ->
                                     FilterChip(
                                         onClick = {},
-                                        label = { Text(interest.label) },
+                                        label = { Text(interest) },
                                         selected = true,
                                         modifier = Modifier
                                             .padding(horizontal = 4.dp),
@@ -144,7 +148,7 @@ fun DetailScreen(
                                     .weight(1f),
                             ) {
                                 Row {
-                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = "address")
+                                    Icon(painterResource(id = R.drawable.ic_address), contentDescription = stringResource(R.string.address))
                                     Text(property.address)
                                 }
                             }

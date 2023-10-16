@@ -13,21 +13,21 @@ import java.util.Date;
 public class UtilsUnitTest {
 
     @Test
-    public void convert_dollarToEuro() throws Exception {
+    public void convert_dollarToEuro() {
         int dollars = 20;
         int result = Utils.convertDollarToEuro(dollars);
         assertEquals(Math.round(dollars * 0.93), result);
     }
 
     @Test
-    public void convert_EuroToDollar() throws Exception {
+    public void convert_EuroToDollar() {
         int euros = 20;
         int result = Utils.convertEuroToDollar(euros);
         assertEquals(Math.round(euros / 0.93), result);
     }
 
     @Test
-    public void modify_DateFormat() throws Exception {
+    public void modify_DateFormat() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String result = Utils.getTodayDate();
         assertEquals(dateFormat.format(new Date()), result);
